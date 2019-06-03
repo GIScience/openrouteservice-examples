@@ -1,0 +1,16 @@
+# for https://mybinder.org
+# from https://github.com/binder-examples/python-conda_pip/blob/master/environment.yml
+name: openrouteservice-examples
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - folium
+  - pandas
+  - shapely
+  - fiona
+  - requests
+  - pip:
+      - openrouteservice
+      - ortools
+  
