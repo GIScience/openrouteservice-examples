@@ -6,3 +6,4 @@ requests
 openrouteservice
 ortools
 jupyter
+jupytext
