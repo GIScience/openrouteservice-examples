@@ -20,11 +20,6 @@
 #
 # We want to give you the opportunity to route the pack of rookies in a fairly optimal way:
 
-# mkdir ors-pubcrawl
-conda create -n ors-pubcrawl python=3.6 folium shapely
-# cd ors-pubcrawl
-pip install openrouteservice ortools
-
 import folium
 from shapely import wkt, geometry
 import json
