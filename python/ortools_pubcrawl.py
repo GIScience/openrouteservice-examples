@@ -55,7 +55,7 @@ m
 # +
 from openrouteservice import client, places
 
-clnt = client.Client(key="5b3ce3597851110001cf6248ad2d346c48c74d0282ee1936b2e20a46")
+clnt = client.Client(key=api_key)
 # -
 
 # [**Here**](https://github.com/GIScience/openrouteservice-docs#places-response) is a nicer list. If you look for pub, you'll find it under `sustenance : 560` with ID 569. Chucking that into a query, yields:
