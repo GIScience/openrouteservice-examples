@@ -1,4 +1,7 @@
+.DS_Store
 .ipynb_checkpoints/
 **/__pycache__/
 .idea/
 .venv/
+./jupyter
+
