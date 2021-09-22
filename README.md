@@ -1,7 +1,7 @@
-# Jupyter examples to use OpenRouteService
+# Jupyter examples to use openrouteservice
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/GIScience/openrouteservice-examples/master?filepath=python)
 
-(Mostly) real-world examples and inspirations to use the full breadth of ORS services and clients.
+(Mostly) real-world examples and inspirations to use the full range of ORS services and clients.
 
 For an instant setup, you can use [MyBinder](https://mybinder.org/v2/gh/GIScience/openrouteservice-examples/master?filepath=python)
 to start an interactive Jupyter server.

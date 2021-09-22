@@ -13,7 +13,7 @@
 #     name: python3
 # ---
 
-# # Combining Twitter Data and OpenRouteService Directions API
+# # Combining Twitter Data and the openrouteservice Directions API
 
 # In the case of a natural disaster like earthquakes or floods areas and streets can be blocked and not passable.
 # Regular routes are not available, and the accessibility of critical infrastructure might change.
@@ -23,8 +23,8 @@
 #
 # In the year 2013 there was a severe flood in the eastern part of Germany, which also affected the city of Magdeburg.
 # This notebook will focus on a possible way to access important locations in such a disaster case.
-# The OpenRouteService `direction` parameter can be used to receive the shortest or fastest route from A to B.
-# This parameter offers the `avoid_polygons` feature which is suited to avoid blocked areas and to generate the shortest
+# The `directions` endpoint of the openrouteservice API can be used to receive the shortest or fastest route from A to B.
+# This endpoint offers the `avoid_polygons` feature which is suited to avoid blocked areas and to generate the shortest
 # route in respect to the disaster situation.
 #
 # In this study Twitter data will be used, because of the location based information they offer in real time quality.
@@ -40,7 +40,7 @@
 # ## Preprocessing
 #
 # To get started load in all needed python packages, apply for your own
-# [OpenRouteService API Key](https://openrouteservice.org/dev/#/signup) and download the Social media data.
+# [openrouteservice API Key](https://openrouteservice.org/dev/#/signup) and download the Social media data.
 #
 # Each tweet includes information about the user, a timestamp, a message, if geo-located coordinates and further metadata.
 # For this study we are only interested in tweets concerning the flood event.
@@ -81,13 +81,13 @@ tweet_file = 'tweets/tweets_magdeburg.shp'
 # The upcoming function `CreateBufferPolygon` transforms point geometries from WGS84 (EPSG: 4326) to UTM32N (EPSG: 32632),
 # creates a 20-meter buffer around each one and transforms the geometries back to WGS84.
 #
-# Furthermore, we create a function `CreateRoute` to request routes from the OpenRouteService Directions API.
+# Furthermore, we create a function `CreateRoute` to request routes from the openrouteservice Directions API.
 # Next to the regular input (starting point, end point, profile, output format, profile), we pass `avoid_polygons` as an
 # additional option.
 #
 # *Side Note: Applying a buffer directly to the point geometries without transforming the spatial reference system will
 # lead to oval shapes.
-# So, whenever you receive non round shapes after buffering consider changing the projection.*
+# So, whenever you receive non-round shapes after buffering consider changing the projection.*
 
 # +
 # Function to create buffer around tweet point geometries and transform it to the needed coordinate system (WGS84)
@@ -136,7 +136,7 @@ def CreateBuffer(route_directions):
 # ## Analysis
 # To get an overview of the received data we load in all data for the chosen time and area.
 # We group the data into tweets related to the flood event (red) and other tweets (blue).
-# Furthermore, we are applying the CreateBufferPoylgon function to create buffer polygons using flood related tweets.
+# Furthermore, we are applying the CreateBufferPolygon function to create buffer polygons using flood related tweets.
 
 # +
 map_tweet = folium.Map(tiles='Stamen Toner', location=([52.136096, 11.635208]), zoom_start=14) # Create map
@@ -252,7 +252,7 @@ map_tweet
 # For many proprietary routing engines which do not use OpenStreetMap data it is also hardly possible to figure out when
 # the data was updated for the last time.
 #
-# To tackle this issue, we showed in this notebook how the direction feature `avoid_polygons` of the OpenRouteService API
+# To tackle this issue, we showed in this notebook how the direction feature `avoid_polygons` of the openrouteservice API
 # can be used.
 # It allows avoiding certain areas (e.g. flood affected regions) and to request the fastest or shortest route for
 # different kind of travel profiles (e.g. car or truck).
@@ -264,4 +264,4 @@ map_tweet
 # limited number of polygons.
 # Make sure not to exceed this limit to receive promising routing directions.
 # Don't worry, we are addressing this issue also on our side.
-# So stay tuned for future improvements of the OpenRouteService API.*
+# So stay tuned for future improvements of the openrouteservice API.*

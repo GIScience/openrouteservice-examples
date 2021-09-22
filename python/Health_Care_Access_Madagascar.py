@@ -13,7 +13,7 @@
 #     name: python3
 # ---
 
-# # Analysis of Access to Health Care using OpenRouteService
+# # Analysis of Access to Health Care using openrouteservice
 
 # ## Abstract
 # In the case of a disaster (natural or man made), a country is not only affected by the intensity of the disaster but
@@ -30,7 +30,7 @@
 #
 # The notebook gives an overview on health sites distribution and the amount of population with access to those by foot
 # and by car for Madagascar.
-# Open source data from OpenStreetMap and tools (such as the OpenRouteService) were used to create accessibility
+# Open source data from OpenStreetMap and tools (such as the openrouteservice) were used to create accessibility
 # isochrones for each hospital and to derive analysis results about the population percentage with access to
 # health facilities per district.
 # The findings show that the inhabitants of 69 of 119 (58%) districts don't have any access to hospitals in a one-hour
@@ -39,7 +39,7 @@
 # ### Workflow:
 # * **Preprocessing**: Get data for districts, health facilities, population density, population count per district.
 # * **Analysis**:
-#     * Compute accessibility to health care facilities using OpenRouteService API
+#     * Compute accessibility to health care facilities using openrouteservice API
 #     * Derive the percentage of people with access to health care per district.
 # * **Result**: Visualize results as choropleth maps.
 #
@@ -48,7 +48,7 @@
 # * [Shapefile of district boundaries][boundaries] - Admin Level 2 (data from Humanitarian Data Exchange, 05/07/2018)
 # * [Shapefile of health facilities][facilities] (data from Humanitarian Data Exchange, 05/07/2018)
 # * [Raster file of population density][pop] - Worldpop Data (data from Humanitarian Data Exchange, 05.07.2018)
-# * [OpenRouteService][ors] - generate isochrones on the OpenStreetMap road network
+# * [openrouteservice][ors] - generate isochrones on the OpenStreetMap road network
 # * [python implementation of zonal statistic by perrygeo][zonal_stats] - generate population count per district
 #
 # [boundaries]: https://data.humdata.org/dataset/madagascar-administrative-boundary-shapefiles-level-1-4
@@ -167,16 +167,16 @@ map_outline
 
 # ## Analysis
 # We will follow these steps:
-# * Get Isochrones from OpenRouteService
+# * Get Isochrones from openrouteservice
 # * Compute Health Access Area per District
 # * Compute Population Count per District
 # * Compute Population with Access per District
 # * Save output as GeoJSON file
 
-# ### Get Isochrones from OpenRouteService
+# ### Get Isochrones from openrouteservice
 # The accessibility of hospitals in a one-hour range is of note.
 # Therefore, isochrones with a one-hour walk range and one-hour car drive range around each hospital were created with
-# the open source tool OpenRouteService.
+# the open source tool openrouteservice.
 # This might take several minutes depending on the number of health facilities
 # (currently we can send 40 requests per minute).
 

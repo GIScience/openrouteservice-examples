@@ -40,7 +40,7 @@ from IPython.core.interactiveshell import InteractiveShell
 # The supplies included vaccinations and medications for water-borne diseases such as Malaria and Cholera,
 # so distribution efficiency was critical to contain disastrous epidemics.
 #
-# We'll solve this complex problem with [OpenRouteService](https://openrouteservice.org) new **route optimization service**.
+# We'll solve this complex problem with [openrouteservice](https://openrouteservice.org) new **route optimization service**.
 #
 
 # ## The logistics setup
@@ -107,7 +107,7 @@ m
 # Now that we have described the setup sufficiently, we can start to set up our actual Vehicle Routing Problem.
 # For this example we're using the FOSS library of [Vroom](https://github.com/VROOM-Project/vroom), which has
 # [recently seen](http://k1z.blog.uni-heidelberg.de/2019/01/24/solve-routing-optimization-with-vroom-ors/) support for
-# OpenRouteService and is available through our APIs.
+# openrouteservice and is available through our APIs.
 #
 # To properly describe the problem in algorithmic terms, we have to provide the following information:
 #
@@ -120,7 +120,7 @@ m
 #
 # We defined all these parameters either in code above or in the data sheet located in
 # `../resources/data/idai_health_sites.csv`.
-# Now we have to only wrap this information into our code and send a request to OpenRouteService optimization service at
+# Now we have to only wrap this information into our code and send a request to openrouteservice optimization service at
 # [`https://api.openrouteservice.org/optimization`](https://openrouteservice.org/dev/#/api-docs/optimization/post).
 
 # +
@@ -156,7 +156,7 @@ for delivery in deliveries_data.itertuples():
     )
 # -
 
-# With that set up we can now perform the actual request and let OpenRouteService calculate the optimal vehicle schedule
+# With that set up we can now perform the actual request and let openrouteservice calculate the optimal vehicle schedule
 # for all deliveries.
 
 # +
