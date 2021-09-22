@@ -14,14 +14,9 @@
 #     name: python3
 # ---
 
-import folium
-from folium.plugins import BeautifyIcon
-import shapely
-import pandas as pd
-import openrouteservice as ors
-from IPython.core.interactiveshell import InteractiveShell
-
 # # Routing optimization in a humanitarian context
+# > Note: All notebooks need the [environment dependencies](https://github.com/GIScience/openrouteservice-examples#local-installation)
+# > as well as an [openrouteservice API key](https://openrouteservice.org/dev/#/signup) to run
 #
 # Routing optimization generally solves the [Vehicle Routing Problem](https://en.wikipedia.org/wiki/Vehicle_routing_problem)
 # (a simple example being the more widely known [Traveling Salesman Problem](https://en.wikipedia.org/wiki/Travelling_salesman_problem)).
@@ -40,8 +35,14 @@ from IPython.core.interactiveshell import InteractiveShell
 # The supplies included vaccinations and medications for water-borne diseases such as Malaria and Cholera,
 # so distribution efficiency was critical to contain disastrous epidemics.
 #
-# We'll solve this complex problem with [openrouteservice](https://openrouteservice.org) new **route optimization service**.
-#
+# We'll solve this complex problem with the **optimization** endpoint of [openrouteservice](https://openrouteservice.org).
+
+import folium
+from folium.plugins import BeautifyIcon
+import shapely
+import pandas as pd
+import openrouteservice as ors
+from IPython.core.interactiveshell import InteractiveShell
 
 # ## The logistics setup
 #

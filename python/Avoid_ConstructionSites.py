@@ -14,6 +14,8 @@
 # ---
 
 # # Avoiding construction sites dynamically
+# > Note: All notebooks need the [environment dependencies](https://github.com/GIScience/openrouteservice-examples#local-installation)
+# > as well as an [openrouteservice API key](https://openrouteservice.org/dev/#/signup) to run
 
 # In this example, we'd like to showcase how to use the [directions API][directions] and to avoid a number of
 # construction sites while routing.

@@ -14,6 +14,8 @@
 # ---
 
 # # Combining Twitter Data and the openrouteservice Directions API
+# > Note: All notebooks need the [environment dependencies](https://github.com/GIScience/openrouteservice-examples#local-installation)
+# > as well as an [openrouteservice API key](https://openrouteservice.org/dev/#/signup) to run
 
 # In the case of a natural disaster like earthquakes or floods areas and streets can be blocked and not passable.
 # Regular routes are not available, and the accessibility of critical infrastructure might change.
@@ -39,8 +41,7 @@
 
 # ## Preprocessing
 #
-# To get started load in all needed python packages, apply for your own
-# [openrouteservice API Key](https://openrouteservice.org/dev/#/signup) and download the Social media data.
+# To get started download the Social media data.
 #
 # Each tweet includes information about the user, a timestamp, a message, if geo-located coordinates and further metadata.
 # For this study we are only interested in tweets concerning the flood event.

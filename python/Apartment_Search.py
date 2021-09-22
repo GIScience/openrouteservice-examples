@@ -13,15 +13,13 @@
 #     name: python3
 # ---
 
+# # Search for a suitable apartment
+# > Note: All notebooks need the [environment dependencies](https://github.com/GIScience/openrouteservice-examples#local-installation)
+# > as well as an [openrouteservice API key](https://openrouteservice.org/dev/#/signup) to run
+#
 # In this notebook we'll provide an example for using different openrouteservice API's to help you look for an apartment.
 
-# setup
-# !mkdir ors-apartment
-# !conda create -n ors-apartment python=3.9 shapely --yes
-# !cd ors-apartment
-# !pip install openrouteservice ortools folium
-
-# +
+# + pycharm={"name": "#%%\n"}
 import folium
 
 from openrouteservice import client

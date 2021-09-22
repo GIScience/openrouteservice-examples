@@ -15,7 +15,10 @@
 # ---
 
 # # Dieselgate Routing
-
+#
+# > Note: All notebooks need the [environment dependencies](https://github.com/GIScience/openrouteservice-examples#local-installation)
+# > as well as an [openrouteservice API key](https://openrouteservice.org/dev/#/signup) to run
+#
 # From the year 2019 on, Berlin will impose the Diesel ban.
 # The following streets will be affected: Leipziger Straße, Reinhardstraße, Friedrichstraße, Brückenstraße, Kapweg,
 # Alt-Moabit, Stromstraße und Leonorenstraße.
@@ -24,7 +27,6 @@
 # (solely inferred from superficial research) will change its route from 2019. You'll find remarkable similarities.
 
 # +
-# Needed packages
 from openrouteservice import client
 import folium
 from shapely.geometry import LineString, Polygon, mapping

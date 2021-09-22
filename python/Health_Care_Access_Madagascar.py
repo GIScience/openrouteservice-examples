@@ -14,6 +14,8 @@
 # ---
 
 # # Analysis of Access to Health Care using openrouteservice
+# > Note: All notebooks need the [environment dependencies](https://github.com/GIScience/openrouteservice-examples#local-installation)
+# > as well as an [openrouteservice API key](https://openrouteservice.org/dev/#/signup) to run
 
 # ## Abstract
 # In the case of a disaster (natural or man made), a country is not only affected by the intensity of the disaster but

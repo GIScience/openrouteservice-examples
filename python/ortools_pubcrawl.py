@@ -15,6 +15,8 @@
 # ---
 
 # # Route optimization of a pub crawl with ORS and `ortools`
+# > Note: All notebooks need the [environment dependencies](https://github.com/GIScience/openrouteservice-examples#local-installation)
+# > as well as an [openrouteservice API key](https://openrouteservice.org/dev/#/signup) to run
 
 # It's this of the year again (or will be in 6 months):
 # the freshmen pour into the institute and as the diligent student council you are, you want to welcome them for their
@@ -142,7 +144,8 @@ pubs_matrix = clnt.distance_matrix(**request)
 print("Calculated {}x{} routes.".format(len(pubs_matrix['durations']),len(pubs_matrix['durations'][0])))
 # -
 
-# Check, 26x26. So, we got the durations now in `pubs_matrix['durations']`. Then there's finally the great entrance of [**ortools**](https://github.com/google/or-tools).
+# Check, 26x26. So, we got the durations now in `pubs_matrix['durations']`.
+# Then there's finally the great entrance of [**ortools**](https://github.com/google/or-tools).
 #
 # Note, this is a local search.
 
