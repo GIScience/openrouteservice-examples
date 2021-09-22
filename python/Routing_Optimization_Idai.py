@@ -39,10 +39,8 @@
 
 import folium
 from folium.plugins import BeautifyIcon
-import shapely
 import pandas as pd
 import openrouteservice as ors
-from IPython.core.interactiveshell import InteractiveShell
 
 # ## The logistics setup
 #

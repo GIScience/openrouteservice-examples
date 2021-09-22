@@ -26,8 +26,6 @@
 
 import folium
 from shapely import wkt, geometry
-import json
-from pprint import pprint
 
 # Now we're ready to start our most optimally planned pub crawl ever through hipster Kreuzberg!
 # It will also be the most un-hipster pub crawl ever, as we'll cover ground with a taxi.
@@ -106,8 +104,6 @@ print("\nAmount of smoker pubs: {}".format(len(pubs_smoker)))
 # Means, you can only run one per minute.
 
 # +
-from openrouteservice import geocode
-
 pubs_addresses = []
 
 for feat in pubs_smoker:
@@ -151,7 +147,6 @@ print("Calculated {}x{} routes.".format(len(pubs_matrix['durations']),len(pubs_m
 
 # +
 from ortools.constraint_solver import pywrapcp
-from ortools.constraint_solver import routing_enums_pb2
 
 tsp_size = len(pubs_addresses)
 num_routes = 1
@@ -202,14 +197,13 @@ if tsp_size > 0:
         route += str(pubs_addresses[manager.IndexToNode(index)])
         optimal_coords.append(pubs_coords[manager.IndexToNode(index)])
         print("Route:\n" + route)
+
+
 # -
 
 # Visualizing both, the optimal route, and the more or less random waypoint order of the initial GeoJSON, look like this:
 
 # +
-from openrouteservice import directions
-import os.path
-
 def style_function(color):
     return lambda feature: dict(color=color,
                               weight=3,

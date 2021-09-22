@@ -64,11 +64,9 @@
 # +
 import os
 
-from IPython.display import *
-from IPython.display import HTML, display
+from IPython.display import display
 
 import folium
-from folium import Map, Marker, FeatureGroup, LayerControl
 from folium.plugins import MarkerCluster
 
 from openrouteservice import client
@@ -76,7 +74,7 @@ from openrouteservice import client
 import time
 import pandas as pd
 import fiona as fn
-from shapely.geometry import shape, Polygon, mapping
+from shapely.geometry import shape, mapping
 from shapely.ops import cascaded_union
 
 # import zonal stats function from python file, get it here: https://gist.github.com/perrygeo/5667173

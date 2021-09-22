@@ -29,9 +29,8 @@
 # +
 from openrouteservice import client
 import folium
-from shapely.geometry import LineString, Polygon, mapping
+from shapely.geometry import LineString, mapping
 from shapely.ops import cascaded_union
-import time
 
 def style_function(color): # To style data
     return lambda feature: dict(color=color,

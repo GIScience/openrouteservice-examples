@@ -50,18 +50,13 @@
 # (*Note: This is not done within this notebook. Make sure to provide this information already in your data set.*)
 
 # +
-import os
-
 import folium
-from folium import Map, Marker, LayerControl
-#from folium.plugins import MarkerCluster
 
 from openrouteservice import client
 
 import fiona as fn
-from shapely import geometry
-from shapely.geometry import shape, Polygon, mapping, MultiPolygon, LineString, Point
-from shapely.ops import cascaded_union, transform
+from shapely.geometry import Polygon, mapping, MultiPolygon, LineString, Point
+from shapely.ops import cascaded_union
 
 import pyproj
 
@@ -113,7 +108,7 @@ def CreateRoute(avoided_point_list, n=0):
                     'profile': 'driving-car',
                     'preference': 'shortest',
                     'instructions': False,
-                     'options': {'avoid_polygons': geometry.mapping(MultiPolygon(avoided_point_list))}}
+                     'options': {'avoid_polygons': mapping(MultiPolygon(avoided_point_list))}}
     route_directions = ors.directions(**route_request)
 
     return route_directions
