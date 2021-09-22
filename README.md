@@ -27,14 +27,17 @@ pip install -r requirements
 > 
 > Then, run jupyter commands with `./jupyter` instead. 
 
+### Launch the Jupyter server on the python directory
+jupyter notebook python/
+
+### Development
+If you are not just using but editing or adding notebooks, you need to install the jupytext extension 
+
 ```bash
 # set up jupytext server extension
 jupyter nbextension install --py jupytext --user
 jupyter nbextension enable jupytext --user --py
 jupyter serverextension enable jupytext
-
-# Launch the Jupyter server on the python directory
-jupyter notebook python/
 ```
 
 Note, that every notebook is paired with a corresponding `.py`-file of the same name.
