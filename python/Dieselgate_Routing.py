@@ -7,18 +7,21 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.11.4
+#       jupytext_version: 1.12.0
 #   kernelspec:
-#     display_name: Python 3
+#     display_name: Python 3 (ipykernel)
 #     language: python
 #     name: python3
 # ---
 
 # # Dieselgate Routing
 
-# From the year 2019 on, Berlin will impose the Diesel ban. The following streets will be affected: Leipziger Straße, Reinhardstraße, Friedrichstraße, Brückenstraße, Kapweg, Alt-Moabit, Stromstraße und Leonorenstraße.
+# From the year 2019 on, Berlin will impose the Diesel ban.
+# The following streets will be affected: Leipziger Straße, Reinhardstraße, Friedrichstraße, Brückenstraße, Kapweg,
+# Alt-Moabit, Stromstraße und Leonorenstraße.
 #
-# As a showcase, we'll have a look how the frequent visits of Angela Merkel to the German Currywurst Museum (solely inferred from superficial research) will change its route from 2019. You'll find remarkable similarities.
+# As a showcase, we'll have a look how the frequent visits of Angela Merkel to the German Currywurst Museum
+# (solely inferred from superficial research) will change its route from 2019. You'll find remarkable similarities.
 
 # +
 # Needed packages
@@ -83,7 +86,9 @@ map_berlin
 
 # ### Dieselgate Routing
 #
-# Coming soon: The shortest route for a Diesel driver, which must avoid the blackish areas. Then, affected cars can't cross Friedrichstraße anymore. But see for yourself:
+# Coming soon: The shortest route for a Diesel driver, which must avoid the blackish areas.
+# Then, affected cars can't cross Friedrichstraße anymore.
+# See for yourself:
 
 # + code_folding=[1, 9, 10]
 # Start and destination coordinates of affectes streets
@@ -138,6 +143,8 @@ folium.GeoJson(route_diesel,
 map_berlin.add_child(folium.map.LayerControl())
 # -
 
-# Now, here it should be noted, that our dear Chancellor would have to drive a detour of more than **1.5 times** the current distance, imposing 50% more pollution on Berlin's residents, just to enjoy the history of the Currywurst. Click on the routes to see for yourself.
+# Now, here it should be noted, that our dear Chancellor would have to drive a detour of more than **1.5 times** the
+# current distance, imposing 50% more pollution on Berlin's residents, just to enjoy the history of the Currywurst.
+# Click on the routes to see for yourself.
 #
 # At least Friedrichstraße is safe soon!

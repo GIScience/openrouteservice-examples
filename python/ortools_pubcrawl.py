@@ -7,16 +7,18 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.11.4
+#       jupytext_version: 1.12.0
 #   kernelspec:
-#     display_name: Python 3
+#     display_name: Python 3 (ipykernel)
 #     language: python
 #     name: python3
 # ---
 
 # # Route optimization of a pub crawl with ORS and `ortools`
 
-# It's this of the year again (or will be in 6 months): the freshmen pour into the institute and as the diligent student council you are, you want to welcome them for their geo adventure with a stately pub crawl to prepare them for the challenges lying ahead.
+# It's this of the year again (or will be in 6 months):
+# the freshmen pour into the institute and as the diligent student council you are, you want to welcome them for their
+# geo adventure with a stately pub crawl to prepare them for the challenges lying ahead.
 #
 # We want to give you the opportunity to route the pack of rookies in a fairly optimal way:
 
@@ -25,9 +27,15 @@ from shapely import wkt, geometry
 import json
 from pprint import pprint
 
-# Now we're ready to start our most optimally planned pub crawl ever through hipster Kreuzberg! It will also be the most un-hipster pub crawl ever, as we'll cover ground with a taxi. At least it's safer than biking half-delirious.
+# Now we're ready to start our most optimally planned pub crawl ever through hipster Kreuzberg!
+# It will also be the most un-hipster pub crawl ever, as we'll cover ground with a taxi.
+# At least it's safer than biking half-delirious.
 #
-# First the basic parameters: API key and the district polygon to limit our pub search. The Well Known Text was prepared in QGIS from Berlin authority's [WFS](http://fbinter.stadt-berlin.de/fb/wfs/geometry/senstadt/re_ortsteil/) (QGIS field calculator has a `geom_to_wkt` method). BTW, Berlin, hope you don't wonder why your feature services are so slow... Simplify is the magic word, simplify.
+# First the basic parameters: API key and the district polygon to limit our pub search.
+# The Well Known Text was prepared in QGIS from Berlin authority's
+# [WFS](http://fbinter.stadt-berlin.de/fb/wfs/geometry/senstadt/re_ortsteil/)
+# (QGIS field calculator has a `geom_to_wkt` method).
+# BTW, Berlin, hope you don't wonder why your feature services are so slow... Simplify is the magic word, simplify.
 
 # +
 api_key = 'your_key'
@@ -50,7 +58,11 @@ folium.vector_layers.Polygon(aoi_coords,
                                      weight=3).add_to(m)
 m
 
-# Now it's time to see which are the lucky bars to host a bunch of increasingly drunk geos. We use the [**Places API**](https://openrouteservice.org/documentation/#/reference/places/places/location-service-(get), where we can pass a GeoJSON as object right into. As we want to crawl only bars and not churches, we have to limit the query to category ID's which represent pubs. We can get the mapping easily when passing `category_list`:
+# Now it's time to see which are the lucky bars to host a bunch of increasingly drunk geos.
+# We use the [**Places API**](https://openrouteservice.org/documentation/#/reference/places/places/location-service-(get),
+# where we can pass a GeoJSON as object right into.
+# As we want to crawl only bars and not churches, we have to limit the query to category ID's which represent pubs.
+# We can get the mapping easily when passing `category_list`:
 
 # +
 from openrouteservice import client, places
@@ -58,7 +70,9 @@ from openrouteservice import client, places
 clnt = client.Client(key=api_key)
 # -
 
-# [**Here**](https://github.com/GIScience/openrouteservice-docs#places-response) is a nicer list. If you look for pub, you'll find it under `sustenance : 560` with ID 569. Chucking that into a query, yields:
+# [**Here**](https://github.com/GIScience/openrouteservice-docs#places-response) is a nicer list.
+# If you look for pub, you'll find it under `sustenance : 560` with ID 569.
+# Chucking that into a query, yields:
 
 # +
 aoi_json = geometry.mapping(geometry.shape(aoi_geom))
@@ -72,7 +86,9 @@ pubs = clnt.places(**query)[0]['features'] # Perform the actual request and get 
 print("\nAmount of pubs: {}".format(len(pubs)))
 # -
 
-# 107 bars in one night might be a stretch, even for such a resilient species. Coincidentally, the rate of smokers is unproportionally high within the undergrad geo community. So, we really would like to hang out in smoker bars:
+# 107 bars in one night might be a stretch, even for such a resilient species.
+# Coincidentally, the rate of smokers is disproportionally high within the undergrad geo community.
+# So, we really would like to hang out in smoker bars:
 
 # +
 query['filters_custom'] = {'smoking':['yes']} # Filter out smoker bars
@@ -83,7 +99,9 @@ print("\nAmount of smoker pubs: {}".format(len(pubs_smoker)))
 
 # A bit better. Let's see where they are.
 #
-# **Optionally**, use the [**Geocoding API**](https://openrouteservice.org/documentation/#/reference/places/places/location-service-(get) to get representable names. Note, it'll be 25 API calls. Means, you can only run one per minute.
+# **Optionally**, use the [**Geocoding API**](https://openrouteservice.org/documentation/#/reference/places/places/location-service-(get) to get representable names.
+# Note, it'll be 25 API calls.
+# Means, you can only run one per minute.
 
 # +
 from openrouteservice import geocode
@@ -100,13 +118,16 @@ for feat in pubs_smoker:
                         prefix='fa')
     folium.map.Marker([lat, lon], icon=icon, popup=popup).add_to(m)
     pubs_addresses.append(name)
-    
+
 # folium.map.LayerControl().add_to(m)
 m
 # -
 
-# Ok, we have an idea where we go. But not in which order. To determine the optimal route, we first have to know the distance between all pubs. We can conveniently solve this with the [**Matrix API**](https://openrouteservice.org/documentation/#/reference/places/places/location-service-(get).
-# >I'd have like to do this example for biking/walking, but I realized too late that we restricted matrix calls to 5x5 locations for those profiles...
+# Ok, we have an idea where we go.
+# But, not in which order.
+# To determine the optimal route, we first have to know the distance between all pubs.
+# We can conveniently solve this with the [**Matrix API**](https://openrouteservice.org/documentation/#/reference/places/places/location-service-(get).
+# > I'd have like to do this example for biking/walking, but I realized too late that we restricted matrix calls to 5x5 locations for those profiles...
 
 # +
 from openrouteservice import distance_matrix
@@ -116,7 +137,7 @@ pubs_coords = [feat['geometry']['coordinates'] for feat in pubs_smoker]
 request = {'locations': pubs_coords,
            'profile': 'driving-car',
            'metrics': ['duration']}
-    
+
 pubs_matrix = clnt.distance_matrix(**request)
 print("Calculated {}x{} routes.".format(len(pubs_matrix['durations']),len(pubs_matrix['durations'][0])))
 # -
@@ -137,18 +158,18 @@ coords_aoi = [(y,x) for x,y in aoi_coords] # swap (x,y) to (y,x)
 optimal_coords = []
 
 if tsp_size > 0:
-    
+
     # Old Stuff kept for reference
     # routing = pywrapcp.RoutingModel(tsp_size, num_routes, start)
-    
+
     # New Way according to ortools v7.0 docs (https://developers.google.com/optimization/support/release_notes#announcing-the-release-of-or-tools-v70)
     # manager = pywrapcp.RoutingIndexManager(num_locations, num_vehicles, depot)
     # routing = pywrapcp.RoutingModel(manager)
-    
+
     # Adaption according to old and new way
     manager = pywrapcp.RoutingIndexManager(tsp_size, num_routes, start)
     routing = pywrapcp.RoutingModel(manager)
-    
+
     # Create the distance callback, which takes two arguments (the from and to node indices)
     # and returns the distance between these nodes.
     def distance_callback(from_index, to_index):
@@ -157,7 +178,7 @@ if tsp_size > 0:
         from_node = manager.IndexToNode(from_index)
         to_node = manager.IndexToNode(to_index)
         return int(pubs_matrix['durations'][from_node][to_node])
-    
+
     # Since v7.0, this also needs to be wrapped:
     transit_callback_index = routing.RegisterTransitCallback(distance_callback)
 
@@ -180,7 +201,7 @@ if tsp_size > 0:
         print("Route:\n" + route)
 # -
 
-# Visualizing both, the optimal route, and the more or less random waypoint order of the intial GeoJSON, look like this:
+# Visualizing both, the optimal route, and the more or less random waypoint order of the initial GeoJSON, look like this:
 
 # +
 from openrouteservice import directions
@@ -197,7 +218,7 @@ request = {'coordinates': pubs_coords,
            'profile': 'driving-car',
            'geometry': 'true',
            'format_out': 'geojson',
-#            'instructions': 'false'          
+#            'instructions': 'false'
           }
 random_route = clnt.directions(**request)
 
@@ -226,7 +247,7 @@ random_duration = 0
 
 optimal_duration = optimal_route['features'][0]['properties']['summary']['duration'] / 60
 random_duration = random_route['features'][0]['properties']['summary']['duration'] / 60
-    
+
 print("Duration optimal route: {0:.3f} mins\nDuration random route: {1:.3f} mins".format(optimal_duration,
                                                                                          random_duration))
 # -
