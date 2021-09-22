@@ -69,7 +69,7 @@ m
 # +
 from openrouteservice import client, places
 
-clnt = client.Client(key=api_key)
+ors = client.Client(key=api_key)
 # -
 
 # [**Here**](https://github.com/GIScience/openrouteservice-docs#places-response) is a nicer list.
@@ -82,7 +82,7 @@ query = {'request': 'pois',
         'geojson': aoi_json,
         'filter_category_ids': [569],
         'sortby': 'distance'}
-pubs = clnt.places(**query)[0]['features'] # Perform the actual request and get inner json
+pubs = ors.places(**query)[0]['features'] # Perform the actual request and get inner json
 
 # Amount of pubs in Kreuzberg
 print("\nAmount of pubs: {}".format(len(pubs)))
@@ -94,7 +94,7 @@ print("\nAmount of pubs: {}".format(len(pubs)))
 
 # +
 query['filters_custom'] = {'smoking':['yes']} # Filter out smoker bars
-pubs_smoker = clnt.places(**query)[0]['features']
+pubs_smoker = ors.places(**query)[0]['features']
 
 print("\nAmount of smoker pubs: {}".format(len(pubs_smoker)))
 # -
@@ -112,7 +112,7 @@ pubs_addresses = []
 
 for feat in pubs_smoker:
     lon, lat = feat['geometry']['coordinates']
-    name = clnt.pelias_reverse(point=(lon, lat))['features'][0]['properties']['name']
+    name = ors.pelias_reverse(point=(lon, lat))['features'][0]['properties']['name']
     popup = "<strong>{0}</strong><br>Lat: {1:.3f}<br>Long: {2:.3f}".format(name, lat, lon)
     icon = folium.map.Icon(color='lightgray',
                         icon_color='#b5231a',
@@ -140,7 +140,7 @@ request = {'locations': pubs_coords,
            'profile': 'driving-car',
            'metrics': ['duration']}
 
-pubs_matrix = clnt.distance_matrix(**request)
+pubs_matrix = ors.distance_matrix(**request)
 print("Calculated {}x{} routes.".format(len(pubs_matrix['durations']),len(pubs_matrix['durations'][0])))
 # -
 
@@ -223,7 +223,7 @@ request = {'coordinates': pubs_coords,
            'format_out': 'geojson',
 #            'instructions': 'false'
           }
-random_route = clnt.directions(**request)
+random_route = ors.directions(**request)
 
 folium.features.GeoJson(data=random_route,
                         name='Random Bar Crawl',
@@ -232,7 +232,7 @@ folium.features.GeoJson(data=random_route,
 
 # And now the optimal route
 request['coordinates'] = optimal_coords
-optimal_route = clnt.directions(**request)
+optimal_route = ors.directions(**request)
 folium.features.GeoJson(data=optimal_route,
                         name='Optimal Bar Crawl',
                         style_function=style_function('#6666ff'),

@@ -48,7 +48,7 @@ def style_function(color): # To style data
 # +
 # Basic parameters
 api_key = 'your_key' #https://openrouteservice.org/sign-up
-clnt = client.Client(key=api_key)
+ors = client.Client(key=api_key)
 
 map_berlin = folium.Map(tiles='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                         attr='&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>',
@@ -67,7 +67,7 @@ direction_params = {'coordinates': coordinates,
                     'preference': 'shortest',
                     'geometry': 'true'}
 
-regular_route = clnt.directions(**direction_params) # Direction request
+regular_route = ors.directions(**direction_params) # Direction request
 
 # Build popup
 distance, duration = regular_route['features'][0]['properties']['summary'].values()
@@ -108,7 +108,7 @@ for street in avoid_streets:
                     'format_out': 'geojson',
                     'preference': 'shortest',
                     'geometry': 'true'}
-    avoid_request = clnt.directions(**avoid_params)
+    avoid_request = ors.directions(**avoid_params)
     coords = avoid_request['features'][0]['geometry']['coordinates']
     route_buffer = LineString(coords).buffer(0.0005) # Create geometry buffer
     folium.vector_layers.Polygon([(y,x) for x,y in list(route_buffer.exterior.coords)],
@@ -130,7 +130,7 @@ diesel_request = {'coordinates': coordinates,
                 'preference': 'shortest',
                 'instructions': False,
                  'options': {'avoid_polygons': mapping(union_buffer)}}
-route_diesel = clnt.directions(**diesel_request)
+route_diesel = ors.directions(**diesel_request)
 
 # Build popup
 distance, duration = route_diesel['features'][0]['properties']['summary'].values()

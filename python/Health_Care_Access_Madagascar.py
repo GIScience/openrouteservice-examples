@@ -95,7 +95,7 @@ from zonal_stats import *
 # +
 # insert your ORS api key
 api_key = '{your-ors-api-key}'
-clnt = client.Client(key=api_key)
+ors = client.Client(key=api_key)
 
 # make sure to provide the right filenames
 districts_filename = 'data/mdg_polbnda_adm2_Distritcts_BNGRC_OCHA.shp'
@@ -195,7 +195,7 @@ for facility_id in facilities_dictionary.keys():
                           'segments': 3600, # 3600 = 1hour
                           'attributes': {'total_pop', 'area'}}
 
-        request = clnt.isochrones(**iso_params)
+        request = ors.isochrones(**iso_params)
         request_counter += 1
 
         lon, lat = loc['geometry']['coordinates']
@@ -234,7 +234,7 @@ for facility_id in facilities_dictionary.keys():
                           'range_type': 'time',
                           'segments': 3600, # 3600 = 1hour
                           'attributes': {'total_pop', 'area'}}
-        request = clnt.isochrones(**iso_params)
+        request = ors.isochrones(**iso_params)
         request_counter += 1
 
         lon, lat = loc['geometry']['coordinates']

@@ -36,7 +36,7 @@ from openrouteservice import client
 
 # +
 api_key = 'your_key'  #Provide your personal API key
-clnt = client.Client(key=api_key)
+ors = client.Client(key=api_key)
 # Set up folium map
 map1 = folium.Map(tiles='Stamen Toner', location=([37.738684, -122.450523]), zoom_start=12)
 
@@ -54,7 +54,7 @@ params_iso = {'profile': 'foot-walking',
 
 for name, apt in apartments.items():
     params_iso['locations'] = [apt['location']]  # Add apartment coords to request parameters
-    apt['iso'] = clnt.isochrones(**params_iso)  # Perform isochrone request
+    apt['iso'] = ors.isochrones(**params_iso)  # Perform isochrone request
     folium.features.GeoJson(apt['iso']).add_to(map1)  # Add GeoJson to map
 
     folium.map.Marker(list(reversed(apt['location'])),  # reverse coords due to weird folium lat/lon syntax
@@ -94,7 +94,7 @@ for name, apt in apartments.items():
     for typ, category in categories_poi.items():
         params_poi['filter_category_ids'] = category
         apt['categories'][typ] = dict()
-        apt['categories'][typ]['geojson']= clnt.places(**params_poi)[0]['features']  # Actual POI request
+        apt['categories'][typ]['geojson']= ors.places(**params_poi)[0]['features']  # Actual POI request
         print(f"\t{typ}: {len(apt['categories'][typ]['geojson'])}")
 # -
 
@@ -134,7 +134,7 @@ for apt in apartments.values():
             params_route['coordinates'] = [apt['location'],
                                            poi_coords
                                           ]
-            json_route = clnt.directions(**params_route)
+            json_route = ors.directions(**params_route)
 
             folium.features.GeoJson(json_route).add_to(map1)
             folium.map.Marker(list(reversed(poi_coords)),

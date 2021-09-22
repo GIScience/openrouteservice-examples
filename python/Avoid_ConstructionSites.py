@@ -69,7 +69,7 @@ def create_buffer_polygon(point_in, resolution=10, radius=10):
 # +
 # Set up the fundamentals
 api_key = 'your_key' # Individual api key
-clnt = client.Client(key=api_key) # Create client with api key
+ors = client.Client(key=api_key) # Create client with api key
 rostock_json = requests.get(url).json() # Get data as JSON
 
 map_params = {'tiles':'Stamen Toner',
@@ -135,7 +135,7 @@ request_params = {'coordinates': [[12.108259, 54.081919],
                 'profile': 'driving-car',
                 'preference': 'shortest',
                 'instructions': 'false',}
-route_normal = clnt.directions(**request_params)
+route_normal = ors.directions(**request_params)
 folium.features.GeoJson(data=route_normal,
                         name='Route without construction sites',
                         style_function=style_function('#FF0000'),
@@ -164,7 +164,7 @@ map2
 # +
 # Add the site polygons to the request parameters
 request_params['options'] = {'avoid_polygons': geometry.mapping(MultiPolygon(sites_buffer_poly))}
-route_detour = clnt.directions(**request_params)
+route_detour = ors.directions(**request_params)
 
 folium.features.GeoJson(data=route_detour,
                         name='Route with construction sites',

@@ -68,7 +68,7 @@ import pyproj
 # +
 # insert your ORS api key
 api_key = 'YOUR-KEY'
-clnt = client.Client(key=api_key)
+ors = client.Client(key=api_key)
 
 # Twitter data from 2013
 tweet_file = 'tweets/tweets_magdeburg.shp'
@@ -114,7 +114,7 @@ def CreateRoute(avoided_point_list, n=0):
                     'preference': 'shortest',
                     'instructions': False,
                      'options': {'avoid_polygons': geometry.mapping(MultiPolygon(avoided_point_list))}}
-    route_directions = clnt.directions(**route_request)
+    route_directions = ors.directions(**route_request)
 
     return route_directions
 
