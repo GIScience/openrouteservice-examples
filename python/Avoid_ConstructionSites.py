@@ -52,15 +52,15 @@ url = 'https://geo.sv.rostock.de/download/opendata/baustellen/baustellen.json'
 
 def create_buffer_polygon(point_in, resolution=10, radius=10):
 
-    sr_wgs = pyproj.Proj(init='epsg:4326')
-    sr_utm = pyproj.Proj(init='epsg:32632') # WGS84 UTM32N
-    point_in_proj = pyproj.transform(sr_wgs, sr_utm, *point_in) # unpack list to arguments
-    point_buffer_proj = Point(point_in_proj).buffer(radius, resolution=resolution) # 10 m buffer
+    convert = pyproj.Transformer.from_crs("epsg:4326", 'epsg:32632')  # WGS84 to UTM32N
+    convert_back = pyproj.Transformer.from_crs('epsg:32632', "epsg:4326")  # UTM32N to WGS84
+    point_in_proj = convert.transform(*point_in)
+    point_buffer_proj = Point(point_in_proj).buffer(radius, resolution=resolution)  # 10 m buffer
 
     # Iterate over all points in buffer and build polygon
     poly_wgs = []
     for point in point_buffer_proj.exterior.coords:
-        poly_wgs.append(pyproj.transform(sr_utm, sr_wgs, *point)) # Transform back to WGS84
+        poly_wgs.append(convert_back.transform(*point))  # Transform back to WGS84
 
     return poly_wgs
 
