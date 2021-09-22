@@ -15,6 +15,8 @@
 # ---
 
 # # Peak routing
+# > Note: All notebooks need the [environment dependencies](https://github.com/GIScience/openrouteservice-examples#local-installation)
+# > as well as an [openrouteservice API key](https://openrouteservice.org/dev/#/signup) to run
 
 # _Contributed by Dr. Stephan Fuchs_
 #
@@ -23,13 +25,31 @@
 # - calculate the routes to the peaks from different starting points
 # - save the maps as PNG files using an intermediate HTML representation
 # as well as the `selenium` and `webdriver-manager` packages
+#
+# ### Requirements:
+# - Firefox browser (for Chrome uncomment the marked lines. For other supported browsers read the
+# [webdriver-manager documentation](https://pypi.org/project/webdriver-manager/))
+
+# #### Import dependencies
+
+# +
+import json
+import os
+import time
+
+import folium
+import openrouteservice
+import overpy
+from PIL import Image
+from selenium import webdriver
+from webdriver_manager.firefox import GeckoDriverManager
+
+# from webdriver_manager.chrome import ChromeDriverManager  # uncomment for Chrome
 
 # + [markdown] pycharm={"name": "#%% md\n"}
 # #### Create an output folder for the maps if it doesn't exist already
 
 # + pycharm={"name": "#%%\n"}
-import os
-
 map_folder = f"{os.getcwd()}/maps"
 
 if not os.path.exists(map_folder):
@@ -44,21 +64,24 @@ if not os.path.exists(map_folder):
 # Here the peaks where the name matches one of the `peak_names` will be extracted from the given bounding box.
 
 # + pycharm={"name": "#%%\n"}
-import overpy
-import json
-
 api = overpy.Overpass()
 
 bbox = [50.82263785103416, 13.996753692626951, 50.843670947425615, 14.116744995117186]
 peak_names = ["Zeisigstein", "Herkuleskopf", "Kristin Hrádek"]
 
 # Query natural peaks from overpass api within bounding box
-result = api.query(
-    f"""node["natural"="peak"][name~"^({"|".join(peak_names)})$"]({",".join([str(c) for c in bbox])});out;""")
+# It will query all point objects where the name matches exactly one of the peak_names
+query = f'node["natural"="peak"][name~"^({"|".join(peak_names)})$"]({",".join([str(c) for c in bbox])});out;'
+
+# Print query for easy copy-paste to overpass-turbo.eu
+# If you do this you probably have to click the magnifying glass on the map to zoom to the data
+print(f"Overpass query:\n{query}\n")
+
+result = api.query(query)
 
 # Extract name and coordinates
 peaks = [{"name": n.tags['name'], "LonLat": [float(n.lon), float(n.lat)]} for n in result.nodes]
-print(json.dumps(peaks, indent=2))
+print(f"Response:\n{json.dumps(peaks, indent=2)}")
 
 # + [markdown] pycharm={"name": "#%% md\n"}
 # #### The starting points
@@ -88,13 +111,10 @@ start_points = [
 # For each of the peaks we create a folium map with routes from every starting point, and add it to the `maps` list.
 # To every map we add the points, the calculated routes and a little styling.
 #
-# __Make sure to insert a valid openrouteservice API key before running the cell__
+# _Make sure to insert a valid openrouteservice API key before running the cell_
 
 # +
-import folium
-import openrouteservice
-
-client = openrouteservice.Client(key="your_api_key")
+client = openrouteservice.Client(key="your-api-key")
 
 
 # The style for the plotted routes.
@@ -178,7 +198,6 @@ maps[1]["map_obj"]
 print(f"-- Routes to {peak_names[2]} peak --")
 print_map_info(maps[2]["routes"])
 maps[2]["map_obj"]
-
 # -
 
 # #### Save maps as PNG
@@ -189,20 +208,18 @@ maps[2]["map_obj"]
 # get our desired PNG file.
 
 # + pycharm={"name": "#%%\n"}
-from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
-import time
+driver = webdriver.Firefox(executable_path=GeckoDriverManager().install())
+# driver = webdriver.Chrome(ChromeDriverManager().install())  # for Chrome uncomment
 
-chrome_driver = webdriver.Chrome(ChromeDriverManager().install())
-chrome_driver.set_window_size(1280, 900)  # choose a resolution
+driver.set_window_size(1280, 900)  # choose a resolution
 
 for peak in peak_names:
     path = f"file://{map_folder}/{peak}.html"
-    chrome_driver.get(url=path)
+    driver.get(url=path)
     time.sleep(2)  # Waiting for page loading
-    chrome_driver.save_screenshot(f"{map_folder}/{peak}.png")
+    driver.save_screenshot(f"{map_folder}/{peak}.png")
 
-chrome_driver.quit()
+driver.quit()
 # -
 
 # #### Additional image manipulation (optional)
@@ -210,9 +227,11 @@ chrome_driver.quit()
 # Here a simple resize is shown to reduce the resolution while keeping the aspect ratio.
 
 # + pycharm={"name": "#%%\n"}
-from PIL import Image
-
 for peak in peak_names:
     image = Image.open(f"{map_folder}/{peak}.png")
     new_image = image.resize([int(i * 0.25) for i in image.size])  # resize to 1/4 the resolution
     new_image.save(f"{map_folder}/{peak}_small.png")
+# -
+
+# Like this we can easily share our great hiking trip suggestions by printing them as a postal card or even as a high
+# resolution image on a poster.
