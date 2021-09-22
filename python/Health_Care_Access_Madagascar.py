@@ -79,6 +79,7 @@ from shapely.ops import cascaded_union
 
 # import zonal stats function from python file, get it here: https://gist.github.com/perrygeo/5667173
 from zonal_stats import *
+
 # -
 
 # ## Preprocessing
@@ -145,7 +146,7 @@ print('created dictionary for %s facilities' % len(facilities_dictionary))
 map_outline = folium.Map(tiles='Stamen Toner', location=([-18.812718, 46.713867]), zoom_start=5)
 
 # Import health facilities
-cluster = MarkerCluster().add_to(map_outline) # To cluster hospitals
+cluster = MarkerCluster().add_to(map_outline)  # To cluster hospitals
 
 for facility_id in facilities_dictionary:
     folium.Marker(list(reversed(facilities_dictionary[facility_id]['geometry']['coordinates']))).add_to(cluster)
@@ -188,10 +189,10 @@ for facility_id in facilities_dictionary.keys():
     loc = facilities_dictionary[facility_id]
     try:
         iso_params = {'locations': loc['geometry']['coordinates'],
-                          'profile': 'driving-car',
-                          'range_type': 'time',
-                          'segments': 3600, # 3600 = 1hour
-                          'attributes': {'total_pop', 'area'}}
+                      'profile': 'driving-car',
+                      'range_type': 'time',
+                      'segments': 3600,  # 3600 = 1hour
+                      'attributes': {'total_pop', 'area'}}
 
         request = ors.isochrones(**iso_params)
         request_counter += 1
@@ -208,10 +209,9 @@ print('requested %s isochrones for car from ORS API' % request_counter)
 iso_union_car = cascaded_union(iso_car)
 print('computed cascaded union of all isochrones')
 
-
 # save isochrones to shapefiles
 schema = {'geometry': 'Polygon',
-              'properties': {'id': 'int'}}
+          'properties': {'id': 'int'}}
 index = 0
 with fn.open(isochrones_car_filename, 'w', 'ESRI Shapefile', schema) as c:
     for poly in iso_union_car:
@@ -228,10 +228,10 @@ for facility_id in facilities_dictionary.keys():
     loc = facilities_dictionary[facility_id]
     try:
         iso_params = {'locations': loc['geometry']['coordinates'],
-                          'profile': 'foot-walking',
-                          'range_type': 'time',
-                          'segments': 3600, # 3600 = 1hour
-                          'attributes': {'total_pop', 'area'}}
+                      'profile': 'foot-walking',
+                      'range_type': 'time',
+                      'segments': 3600,  # 3600 = 1hour
+                      'attributes': {'total_pop', 'area'}}
         request = ors.isochrones(**iso_params)
         request_counter += 1
 
@@ -247,10 +247,9 @@ print('requested %s isochrones for foot from ORS API' % request_counter)
 iso_union_foot = cascaded_union(iso_foot)
 print('computed cascaded union of all isochrones')
 
-
 # save isochrones to shapefiles
 schema = {'geometry': 'Polygon',
-              'properties': {'id': 'int'}}
+          'properties': {'id': 'int'}}
 index = 0
 with fn.open(isochrones_foot_filename, 'w', 'ESRI Shapefile', schema) as c:
     for poly in iso_union_foot:
@@ -264,29 +263,31 @@ print('saved isochrones as shapefiles for pedestrian.')
 
 # +
 # Create isochrones with one-hour foot walking range
-map_isochrones = folium.Map(tiles='Stamen Toner', location=([-18.812718, 46.713867]), zoom_start=5) # New map for isochrones
+map_isochrones = folium.Map(tiles='Stamen Toner', location=([-18.812718, 46.713867]),
+                            zoom_start=5)  # New map for isochrones
 
-def style_function(color): # To style isochrones
+
+def style_function(color):  # To style isochrones
     return lambda feature: dict(color=color)
+
 
 union_coord_car = mapping(iso_union_car)
 for l in union_coord_car['coordinates']:
-    switched_coords = [[(y,x) for x,y in l[0]]]
+    switched_coords = [[(y, x) for x, y in l[0]]]
     folium.features.PolygonMarker(switched_coords,
-                            color='#ff751a',
-                             fill_color='#ff751a',
-                            fill_opacity=0.2,
-                             weight=3).add_to(map_isochrones)
+                                  color='#ff751a',
+                                  fill_color='#ff751a',
+                                  fill_opacity=0.2,
+                                  weight=3).add_to(map_isochrones)
 
 union_coord_foot = mapping(iso_union_foot)
 for l in union_coord_foot['coordinates']:
-
-    switched_coords = [[(y,x) for x,y in l[0]]]
+    switched_coords = [[(y, x) for x, y in l[0]]]
     folium.features.PolygonMarker(switched_coords,
-                            color='#ffd699',
-                             fill_color='#ffd699',
-                            fill_opacity=0.2,
-                             weight=3).add_to(map_isochrones)
+                                  color='#ffd699',
+                                  fill_color='#ffd699',
+                                  fill_opacity=0.2,
+                                  weight=3).add_to(map_isochrones)
 
 map_isochrones.save(os.path.join('results', '2_isochrones.html'))
 map_isochrones
@@ -296,35 +297,39 @@ map_isochrones
 
 # +
 # schema of the new shapefile
-schema =  {'geometry': 'Polygon',
-           'properties': {'district_fid': 'int'}}
+schema = {'geometry': 'Polygon',
+          'properties': {'district_fid': 'int'}}
 
 # creation of the new shapefile with the intersection for car
 car_iso_district_dict = {}
 foot_iso_district_dict = {}
 
 counter = 0
-with fn.open(isochrones_car_per_district_filename, 'w',driver='ESRI Shapefile', schema=schema) as output:
+with fn.open(isochrones_car_per_district_filename, 'w', driver='ESRI Shapefile', schema=schema) as output:
     for district in fn.open(districts_filename):
         for isochrone in fn.open(isochrones_car_filename):
             if shape(district['geometry']).intersects(shape(isochrone['geometry'])):
                 prop = {'district_fid': district['id']}
                 car_iso_district_dict[counter] = district['id']
-                output.write({'geometry':mapping(shape(district['geometry']).intersection(shape(isochrone['geometry']))),'properties': prop})
+                output.write(
+                    {'geometry': mapping(shape(district['geometry']).intersection(shape(isochrone['geometry']))),
+                     'properties': prop})
                 counter += 1
 print('created %s isochrones per district for car' % counter)
 
 # creation of the new shapefile with the intersection for pedestrian
 counter = 0
-with fn.open(isochrones_foot_per_district_filename, 'w',driver='ESRI Shapefile', schema=schema) as output:
+with fn.open(isochrones_foot_per_district_filename, 'w', driver='ESRI Shapefile', schema=schema) as output:
     for district in fn.open(districts_filename):
         for isochrone in fn.open(isochrones_foot_filename):
             if shape(district['geometry']).intersects(shape(isochrone['geometry'])):
                 prop = {'district_fid': district['id']}
                 foot_iso_district_dict[counter] = district['id']
-                output.write({'geometry':mapping(shape(district['geometry']).intersection(shape(isochrone['geometry']))),'properties': prop})
+                output.write(
+                    {'geometry': mapping(shape(district['geometry']).intersection(shape(isochrone['geometry']))),
+                     'properties': prop})
                 counter += 1
-print('created %s isochrones per district for pedestrian' % counter )
+print('created %s isochrones per district for pedestrian' % counter)
 # -
 
 # ### Compute Population Count per District
@@ -348,7 +353,8 @@ print('Madagascar has a total population of %s inhabitants.' % int(total_populat
 
 # +
 # compute zonal statistics for car
-stats_car = zonal_stats(isochrones_car_per_district_filename, population_raster_filename, nodata_value=-999, global_src_extent=False)
+stats_car = zonal_stats(isochrones_car_per_district_filename, population_raster_filename, nodata_value=-999,
+                        global_src_extent=False)
 for element in stats_car:
     district_id = int(car_iso_district_dict[element['fid']])
     try:
@@ -360,16 +366,16 @@ for element in stats_car:
         pass
 print('computed population count with access per district for car.')
 
-
 # compute zonal statistics for pedestrian
-stats_foot = zonal_stats(isochrones_foot_per_district_filename, population_raster_filename, nodata_value=-999, global_src_extent=False)
+stats_foot = zonal_stats(isochrones_foot_per_district_filename, population_raster_filename, nodata_value=-999,
+                         global_src_extent=False)
 for element in stats_foot:
     district_id = int(foot_iso_district_dict[element['fid']])
     try:
         pop_iso = districts_dictionary[district_id]['Foot: Pop. with access'] + element['sum']
         pop_total = districts_dictionary[district_id]['Population Count']
         districts_dictionary[district_id]['Foot: Pop. with access'] = pop_iso
-        districts_dictionary[district_id]['Foot: Pop. with access [%]'] = 100 *pop_iso / pop_total
+        districts_dictionary[district_id]['Foot: Pop. with access [%]'] = 100 * pop_iso / pop_total
     except:
         pass
 print('computed population count with access per district for foot.')
@@ -389,20 +395,19 @@ schema = {'geometry': 'Polygon',
               'pop_foot': 'float',
               'pop_foot_perc': 'float'
           }
-         }
+          }
 
 with fn.open(output_file, 'w', driver='GeoJSON', schema=schema) as c:
     for district_id in districts_dictionary.keys():
         props = {
-              'code': districts_dictionary[district_id]['District Code'],
-              'name': districts_dictionary[district_id]['District Name'],
-              'pop_count': districts_dictionary[district_id]['Population Count'],
-              'pop_car': districts_dictionary[district_id]['Car: Pop. with access'],
-              'pop_car_perc': districts_dictionary[district_id]['Car: Pop. with access [%]'],
-              'pop_foot': districts_dictionary[district_id]['Foot: Pop. with access'],
-              'pop_foot_perc': districts_dictionary[district_id]['Foot: Pop. with access [%]']
+            'code': districts_dictionary[district_id]['District Code'],
+            'name': districts_dictionary[district_id]['District Name'],
+            'pop_count': districts_dictionary[district_id]['Population Count'],
+            'pop_car': districts_dictionary[district_id]['Car: Pop. with access'],
+            'pop_car_perc': districts_dictionary[district_id]['Car: Pop. with access [%]'],
+            'pop_foot': districts_dictionary[district_id]['Foot: Pop. with access'],
+            'pop_foot_perc': districts_dictionary[district_id]['Foot: Pop. with access [%]']
         }
-
 
         # we simplify the geometry
         geom = shape(districts_dictionary[district_id]['geometry'])
@@ -427,12 +432,12 @@ print('display first 5 entries of the final results.')
 
 # +
 map_choropleth_car = folium.Map(tiles='Stamen Toner', location=([-18.812718, 46.713867]), zoom_start=5)
-map_choropleth_car.choropleth(geo_data = output_file,
-                          data = df_total,
-                          columns= ['District Code','Car: Pop. with access [%]'],
-                          key_on = 'feature.properties.code',
-                          fill_color='BuPu',
-                          legend_name='Car: Pop. with access [%]')
+map_choropleth_car.choropleth(geo_data=output_file,
+                              data=df_total,
+                              columns=['District Code', 'Car: Pop. with access [%]'],
+                              key_on='feature.properties.code',
+                              fill_color='BuPu',
+                              legend_name='Car: Pop. with access [%]')
 
 map_choropleth_car.save(os.path.join('results', '3a_choropleth_car.html'))
 map_choropleth_car
@@ -442,12 +447,12 @@ map_choropleth_car
 
 # +
 map_choropleth_foot = folium.Map(tiles='Stamen Toner', location=([-18.812718, 46.713867]), zoom_start=5)
-map_choropleth_foot.choropleth(geo_data = output_file,
-                          data = df_total,
-                          columns= ['District Code','Foot: Pop. with access [%]'],
-                          key_on = 'feature.properties.code',
-                          fill_color='BuPu',
-                          legend_name='Foot: Pop. with access [%]')
+map_choropleth_foot.choropleth(geo_data=output_file,
+                               data=df_total,
+                               columns=['District Code', 'Foot: Pop. with access [%]'],
+                               key_on='feature.properties.code',
+                               fill_color='BuPu',
+                               legend_name='Foot: Pop. with access [%]')
 
 map_choropleth_foot.save(os.path.join('results', '3b_choropleth_foot.html'))
 map_choropleth_foot

@@ -131,7 +131,7 @@ for idx in range(3):
         ors.optimization.Vehicle(
             id=idx,
             start=list(reversed(depot)),
-            #end=list(reversed(depot)),
+            # end=list(reversed(depot)),
             capacity=[300],
             time_window=[1553241600, 1553284800]  # Fri 8-20:00, expressed in POSIX timestamp
         )
@@ -169,13 +169,13 @@ result = ors_client.optimization(
 
 # Add the output to the map
 for color, route in zip(['green', 'red', 'blue'], result['routes']):
-    decoded=ors.convert.decode_polyline(route['geometry'])  # Route geometry is encoded
+    decoded = ors.convert.decode_polyline(route['geometry'])  # Route geometry is encoded
     gj = folium.GeoJson(
         name='Vehicle {}'.format(route['vehicle']),
         data={"type": "FeatureCollection", "features": [{"type": "Feature",
                                                          "geometry": decoded,
                                                          "properties": {"color": color}
-                                                        }]},
+                                                         }]},
         style_function=lambda x: {"color": x['properties']['color']}
     )
     gj.add_child(folium.Tooltip(
@@ -224,7 +224,6 @@ for route in result['routes']:
             ]
         )
     stations.append(vehicle)
-
 
 # Now we can look at each individual vehicle's timetable:
 

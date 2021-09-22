@@ -88,15 +88,15 @@ tweet_file = 'tweets/tweets_magdeburg.shp'
 # +
 # Function to create buffer around tweet point geometries and transform it to the needed coordinate system (WGS84)
 def CreateBufferPolygon(point_in, resolution=2, radius=20):
-    sr_wgs = pyproj.Proj(init='epsg:4326') # WGS84
-    sr_utm = pyproj.Proj(init='epsg:32632') # UTM32N
-    point_in_proj = pyproj.transform(sr_wgs, sr_utm, *point_in) # Unpack list to arguments
-    point_buffer_proj = Point(point_in_proj).buffer(radius, resolution=resolution) # 20 m buffer
+    sr_wgs = pyproj.Proj(init='epsg:4326')  # WGS84
+    sr_utm = pyproj.Proj(init='epsg:32632')  # UTM32N
+    point_in_proj = pyproj.transform(sr_wgs, sr_utm, *point_in)  # Unpack list to arguments
+    point_buffer_proj = Point(point_in_proj).buffer(radius, resolution=resolution)  # 20 m buffer
 
     # Iterate over all points in buffer and build polygon
     poly_wgs = []
     for point in point_buffer_proj.exterior.coords:
-        poly_wgs.append(pyproj.transform(sr_utm, sr_wgs, *point)) # Transform back to WGS84
+        poly_wgs.append(pyproj.transform(sr_utm, sr_wgs, *point))  # Transform back to WGS84
 
     return poly_wgs
 
@@ -104,10 +104,10 @@ def CreateBufferPolygon(point_in, resolution=2, radius=20):
 # Function to request directions with avoided_polygon feature
 def CreateRoute(avoided_point_list, n=0):
     route_request = {'coordinates': coordinates,
-                    'format_out': 'geojson',
-                    'profile': 'driving-car',
-                    'preference': 'shortest',
-                    'instructions': False,
+                     'format_out': 'geojson',
+                     'profile': 'driving-car',
+                     'preference': 'shortest',
+                     'instructions': False,
                      'options': {'avoid_polygons': mapping(MultiPolygon(avoided_point_list))}}
     route_directions = ors.directions(**route_request)
 
@@ -135,15 +135,17 @@ def CreateBuffer(route_directions):
 # Furthermore, we are applying the CreateBufferPolygon function to create buffer polygons using flood related tweets.
 
 # +
-map_tweet = folium.Map(tiles='Stamen Toner', location=([52.136096, 11.635208]), zoom_start=14) # Create map
+map_tweet = folium.Map(tiles='Stamen Toner', location=([52.136096, 11.635208]), zoom_start=14)  # Create map
 
-def style_function(color): # To style data
+
+def style_function(color):  # To style data
     return lambda feature: dict(color=color)
 
+
 counter = 0
-flood_tweets = [] # Flood affected tweets
-tweet_geometry = [] # Simplify geometry of tweet buffer polygons
-with fn.open(tweet_file, 'r') as tweet_data: # Open data in reading mode
+flood_tweets = []  # Flood affected tweets
+tweet_geometry = []  # Simplify geometry of tweet buffer polygons
+with fn.open(tweet_file, 'r') as tweet_data:  # Open data in reading mode
     print('{} tweets in total available.'.format(len(tweet_data)))
     for data in tweet_data:
         # Tweets which are not affected by the flood
@@ -151,24 +153,24 @@ with fn.open(tweet_file, 'r') as tweet_data: # Open data in reading mode
             counter += 1
             folium.Marker(list(reversed(data['geometry']['coordinates'][0])),
                           icon=folium.Icon(color='lightgray',
-                                        icon_color='blue',
-                                        icon='twitter',
-                                        prefix='fa'),
+                                           icon_color='blue',
+                                           icon='twitter',
+                                           prefix='fa'),
                           popup='Regular Tweet').add_to(map_tweet)
 
         # Tweets which are affected by the flood
         else:
             folium.Marker(list(reversed(data['geometry']['coordinates'][0])),
                           icon=folium.Icon(color='lightgray',
-                                        icon_color='red',
-                                        icon='twitter',
-                                        prefix='fa'),
+                                           icon_color='red',
+                                           icon='twitter',
+                                           prefix='fa'),
                           popup=data['properties']['tweet']).add_to(map_tweet)
 
             # Create buffer polygons around affected sites with 20 m radius and low resolution
             flood_tweet = CreateBufferPolygon(data['geometry']['coordinates'][0],
-                                           resolution=2, # low resolution to keep polygons lean
-                                           radius=20)
+                                              resolution=2,  # low resolution to keep polygons lean
+                                              radius=20)
             flood_tweets.append(flood_tweet)
 
             # Create simplify geometry and merge overlapping buffer regions
@@ -178,12 +180,12 @@ union_poly = mapping(cascaded_union(tweet_geometry))
 
 folium.features.GeoJson(data=union_poly,
                         name='Flood affected areas',
-                        style_function=style_function('#ffd699'),).add_to(map_tweet)
+                        style_function=style_function('#ffd699'), ).add_to(map_tweet)
 
 print('{} regular tweets with no flood information avalibale.'.format(counter))
 print(len(flood_tweets), 'tweets with flood information available.')
 
-#map_tweet.save(os.path.join('results', '1_tweets.html'))
+# map_tweet.save(os.path.join('results', '1_tweets.html'))
 map_tweet
 # -
 
@@ -199,13 +201,13 @@ map_tweet
 
 # +
 # Visualize start and destination point on map
-coordinates = [[11.653361, 52.144116], [11.62847, 52.1303]] # Central Station and Fire Department
+coordinates = [[11.653361, 52.144116], [11.62847, 52.1303]]  # Central Station and Fire Department
 for coord in coordinates:
     folium.map.Marker(list(reversed(coord))).add_to(map_tweet)
 
 # Regular Route
-avoided_point_list = [] # Create empty list with avoided tweets
-route_directions = CreateRoute(avoided_point_list) # Create regular route with still empty avoided_point_list
+avoided_point_list = []  # Create empty list with avoided tweets
+route_directions = CreateRoute(avoided_point_list)  # Create regular route with still empty avoided_point_list
 
 folium.features.GeoJson(data=route_directions,
                         name='Regular Route',
@@ -214,7 +216,7 @@ folium.features.GeoJson(data=route_directions,
 print('Generated regular route.')
 
 # Avoiding tweets route
-dilated_route = CreateBuffer(route_directions) # Create buffer around route
+dilated_route = CreateBuffer(route_directions)  # Create buffer around route
 
 # Check if flood affected tweet is located on route
 try:
@@ -235,7 +237,7 @@ try:
 except Exception:
     print('Sorry, there is no route available between the requested destination because of too many blocked streets.')
 
-#map_tweet.save(os.path.join('results', '2_routes.html'))
+# map_tweet.save(os.path.join('results', '2_routes.html'))
 map_tweet.add_child(folium.map.LayerControl())
 map_tweet
 # -

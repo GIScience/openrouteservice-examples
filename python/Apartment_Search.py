@@ -23,6 +23,7 @@
 import folium
 
 from openrouteservice import client
+
 # -
 
 # We want to move to San Francisco with our kids and are looking for the perfect location to get a new home.
@@ -35,22 +36,22 @@ from openrouteservice import client
 # on a map:
 
 # +
-api_key = 'your_key'  #Provide your personal API key
+api_key = 'your_key'  # Provide your personal API key
 ors = client.Client(key=api_key)
 # Set up folium map
 map1 = folium.Map(tiles='Stamen Toner', location=([37.738684, -122.450523]), zoom_start=12)
 
 # Set up the apartment dictionary with real coordinates
 apartments = {'first': {'location': [-122.430954, 37.792965]},
-            'second': {'location': [-122.501636, 37.748653]},
-            'third': {'location': [-122.446629, 37.736928]}
-           }
+              'second': {'location': [-122.501636, 37.748653]},
+              'third': {'location': [-122.446629, 37.736928]}
+              }
 
 # Request of isochrones with 15 minute on foot.
 params_iso = {'profile': 'foot-walking',
               'range': [900],  # 900/60 = 15 minutes
               'attributes': ['total_pop']  # Get population count for isochrones
-             }
+              }
 
 for name, apt in apartments.items():
     params_iso['locations'] = [apt['location']]  # Add apartment coords to request parameters
@@ -59,12 +60,12 @@ for name, apt in apartments.items():
 
     folium.map.Marker(list(reversed(apt['location'])),  # reverse coords due to weird folium lat/lon syntax
                       icon=folium.Icon(color='lightgray',
-                                        icon_color='#cc0000',
-                                        icon='home',
-                                        prefix='fa',
+                                       icon_color='#cc0000',
+                                       icon='home',
+                                       prefix='fa',
                                        ),
                       popup=name,
-                 ).add_to(map1)  # Add apartment locations to map
+                      ).add_to(map1)  # Add apartment locations to map
 
 map1
 # -
@@ -94,7 +95,7 @@ for name, apt in apartments.items():
     for typ, category in categories_poi.items():
         params_poi['filter_category_ids'] = category
         apt['categories'][typ] = dict()
-        apt['categories'][typ]['geojson']= ors.places(**params_poi)[0]['features']  # Actual POI request
+        apt['categories'][typ]['geojson'] = ors.places(**params_poi)[0]['features']  # Actual POI request
         print(f"\t{typ}: {len(apt['categories'][typ]['geojson'])}")
 # -
 
@@ -111,17 +112,17 @@ del apartments['second']
 # +
 # Set up common request parameters
 params_route = {'profile': 'foot-walking',
-               'format_out': 'geojson',
-               'geometry': 'true',
-               'format': 'geojson',
-               'instructions': 'false',
-               }
+                'format_out': 'geojson',
+                'geometry': 'true',
+                'format': 'geojson',
+                'instructions': 'false',
+                }
 
 # Set up dict for font-awesome
 style_dict = {'kindergarten': 'child',
               'supermarket': 'shopping-cart',
               'hairdresser': 'scissors'
-             }
+              }
 
 # Store all routes from all apartments to POIs
 for apt in apartments.values():
@@ -133,7 +134,7 @@ for apt in apartments.values():
             # Perform actual request
             params_route['coordinates'] = [apt['location'],
                                            poi_coords
-                                          ]
+                                           ]
             json_route = ors.directions(**params_route)
 
             folium.features.GeoJson(json_route).add_to(map1)
@@ -142,8 +143,8 @@ for apt in apartments.values():
                                                icon_color='#1a1aff',
                                                icon=style_dict[cat],
                                                prefix='fa'
-                                              )
-                             ).add_to(map1)
+                                               )
+                              ).add_to(map1)
 
             poi_duration = json_route['features'][0]['properties']['summary']['duration']
             pois['durations'].append(poi_duration)  # Record durations of routes
@@ -158,8 +159,8 @@ map1
 # Sum up the closest POIs to each apartment
 for name, apt in apartments.items():
     apt['shortest_sum'] = sum([min(cat['durations']) for cat in apt['categories'].values()])
-    print(f"{name} apartment: {round(apt['shortest_sum']/60, 1)} min"
-         )
+    print(f"{name} apartment: {round(apt['shortest_sum'] / 60, 1)} min"
+          )
 
 # # We got a winner!
 

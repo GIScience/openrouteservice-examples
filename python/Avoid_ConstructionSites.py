@@ -50,8 +50,8 @@ from shapely.geometry import Point, LineString, Polygon, MultiPolygon
 # +
 url = 'https://geo.sv.rostock.de/download/opendata/baustellen/baustellen.json'
 
-def create_buffer_polygon(point_in, resolution=10, radius=10):
 
+def create_buffer_polygon(point_in, resolution=10, radius=10):
     convert = pyproj.Transformer.from_crs("epsg:4326", 'epsg:32632')  # WGS84 to UTM32N
     convert_back = pyproj.Transformer.from_crs('epsg:32632', "epsg:4326")  # UTM32N to WGS84
     point_in_proj = convert.transform(*point_in)
@@ -65,15 +65,14 @@ def create_buffer_polygon(point_in, resolution=10, radius=10):
     return poly_wgs
 
 
-
 # +
 # Set up the fundamentals
-api_key = 'your_key' # Individual api key
-ors = client.Client(key=api_key) # Create client with api key
-rostock_json = requests.get(url).json() # Get data as JSON
+api_key = 'your_key'  # Individual api key
+ors = client.Client(key=api_key)  # Create client with api key
+rostock_json = requests.get(url).json()  # Get data as JSON
 
-map_params = {'tiles':'Stamen Toner',
-              'location':([54.13207, 12.101612]),
+map_params = {'tiles': 'Stamen Toner',
+              'location': ([54.13207, 12.101612]),
               'zoom_start': 12}
 map1 = folium.Map(**map_params)
 
@@ -86,16 +85,16 @@ for site_data in rostock_json['features']:
 
     # Create buffer polygons around construction sites with 10 m radius and low resolution
     site_poly_coords = create_buffer_polygon(site_coords,
-                                           resolution=2, # low resolution to keep polygons lean
-                                           radius=10)
+                                             resolution=2,  # low resolution to keep polygons lean
+                                             radius=10)
     sites_poly.append(site_poly_coords)
 
-    site_poly_coords = [(y,x) for x,y in site_poly_coords] # Reverse coords for folium/Leaflet
+    site_poly_coords = [(y, x) for x, y in site_poly_coords]  # Reverse coords for folium/Leaflet
     folium.vector_layers.Polygon(locations=site_poly_coords,
-                                  color='#ffd699',
-                                  fill_color='#ffd699',
-                                  fill_opacity=0.2,
-                                  weight=3).add_to(map1)
+                                 color='#ffd699',
+                                 fill_color='#ffd699',
+                                 fill_opacity=0.2,
+                                 weight=3).add_to(map1)
 
 map1
 
@@ -120,8 +119,9 @@ map1
 # GeoJSON style function
 def style_function(color):
     return lambda feature: dict(color=color,
-                              weight=3,
-                              opacity=0.5)
+                                weight=3,
+                                opacity=0.5)
+
 
 # Create new map to start from scratch
 map_params.update({'location': ([54.091389, 12.096686]),
@@ -130,11 +130,11 @@ map2 = folium.Map(**map_params)
 
 # Request normal route between appropriate locations without construction sites
 request_params = {'coordinates': [[12.108259, 54.081919],
-                                 [12.072063, 54.103684]],
-                'format_out': 'geojson',
-                'profile': 'driving-car',
-                'preference': 'shortest',
-                'instructions': 'false',}
+                                  [12.072063, 54.103684]],
+                  'format_out': 'geojson',
+                  'profile': 'driving-car',
+                  'preference': 'shortest',
+                  'instructions': 'false', }
 route_normal = ors.directions(**request_params)
 folium.features.GeoJson(data=route_normal,
                         name='Route without construction sites',
