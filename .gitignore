@@ -3,5 +3,6 @@
 **/__pycache__/
 .idea/
 .venv/
-./jupyter
-
+jupyter
+python/maps
+python/geckodriver.log

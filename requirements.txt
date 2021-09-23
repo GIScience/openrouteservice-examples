@@ -8,3 +8,7 @@ ortools
 jupyter
 jupytext
 pyproj
+Pillow
+overpy
+selenium
+webdriver-manager
