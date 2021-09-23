@@ -56,6 +56,7 @@ if not os.path.exists(map_folder):
     print("Creating maps folder")
     os.makedirs(map_folder)
 
+
 # + [markdown] pycharm={"name": "#%% md\n"}
 # #### Get the coordinates of the peaks
 # You can directly download the peak data via the overpy package.
@@ -64,6 +65,12 @@ if not os.path.exists(map_folder):
 # Here the peaks where the name matches one of the `peak_names` will be extracted from the given bounding box.
 
 # + pycharm={"name": "#%%\n"}
+def pretty_json(value) -> str:
+    """
+    Decode utf-8 string values and format json object
+    """
+    return json.dumps(value, indent=2, ensure_ascii=False).encode('utf8').decode()
+
 api = overpy.Overpass()
 
 bbox = [50.82263785103416, 13.996753692626951, 50.843670947425615, 14.116744995117186]
@@ -81,7 +88,8 @@ result = api.query(query)
 
 # Extract name and coordinates
 peaks = [{"name": n.tags['name'], "LonLat": [float(n.lon), float(n.lat)]} for n in result.nodes]
-print(f"Response:\n{json.dumps(peaks, indent=2)}")
+# Show response with utf-8 decoding
+print(f"Response:\n{pretty_json(peaks)}")
 
 # + [markdown] pycharm={"name": "#%% md\n"}
 # #### The starting points
@@ -117,9 +125,11 @@ start_points = [
 client = openrouteservice.Client(key="your-api-key")
 
 
-# The style for the plotted routes.
 def route_style(color):
-    return lambda feature: dict(color=color, opacity=0.9, weight=4, )
+    """
+    The style for the plotted routes
+    """
+    return lambda feature: dict(color=color, opacity=0.9, weight=4)
 
 
 maps = []
@@ -165,10 +175,12 @@ for peak in peaks:
         "map_obj": map_object,
         "routes": routes
     })
+    print(f'Map for peak {peak["name"]} created.')
     del routes
 
     # save as html to maps folder
     map_object.save("maps/" + peak["name"] + ".html")
+print("\nAll map objects available in the 'maps' list variable.\nHtml map files saved to ./maps folder")
 
 
 # + [markdown] pycharm={"name": "#%% md\n"}
@@ -220,6 +232,7 @@ for peak in peak_names:
     driver.save_screenshot(f"{map_folder}/{peak}.png")
 
 driver.quit()
+print("Maps saved as PNG files to ./maps folder")
 # -
 
 # #### Additional image manipulation (optional)
@@ -231,6 +244,7 @@ for peak in peak_names:
     image = Image.open(f"{map_folder}/{peak}.png")
     new_image = image.resize([int(i * 0.25) for i in image.size])  # resize to 1/4 the resolution
     new_image.save(f"{map_folder}/{peak}_small.png")
+print("Maps saved with '_small' suffix to ./maps folder")
 # -
 
 # Like this we can easily share our great hiking trip suggestions by printing them as a postal card or even as a high
