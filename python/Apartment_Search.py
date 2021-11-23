@@ -6,9 +6,9 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.12.0
+#       jupytext_version: 1.11.4
 #   kernelspec:
-#     display_name: Python 3 (ipykernel)
+#     display_name: Python 3
 #     language: python
 #     name: python3
 # ---
@@ -95,7 +95,7 @@ for name, apt in apartments.items():
     for typ, category in categories_poi.items():
         params_poi['filter_category_ids'] = category
         apt['categories'][typ] = dict()
-        apt['categories'][typ]['geojson'] = ors.places(**params_poi)[0]['features']  # Actual POI request
+        apt['categories'][typ]['geojson'] = ors.places(**params_poi)['features']  # Actual POI request
         print(f"\t{typ}: {len(apt['categories'][typ]['geojson'])}")
 # -
 

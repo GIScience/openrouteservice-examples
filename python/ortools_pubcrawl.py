@@ -7,9 +7,9 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.12.0
+#       jupytext_version: 1.11.4
 #   kernelspec:
-#     display_name: Python 3 (ipykernel)
+#     display_name: Python 3
 #     language: python
 #     name: python3
 # ---
@@ -80,19 +80,19 @@ query = {'request': 'pois',
          'geojson': aoi_json,
          'filter_category_ids': [569],
          'sortby': 'distance'}
-pubs = ors.places(**query)[0]['features']  # Perform the actual request and get inner json
+pubs = ors.places(**query)['features']  # Perform the actual request and get inner json
 
 # Amount of pubs in Kreuzberg
 print("\nAmount of pubs: {}".format(len(pubs)))
 # -
 
-# 107 bars in one night might be a stretch, even for such a resilient species.
+# Nearly 100 bars in one night might be a stretch, even for such a resilient species.
 # Coincidentally, the rate of smokers is disproportionally high within the undergrad geo community.
 # So, we really would like to hang out in smoker bars:
 
 # +
 query['filters_custom'] = {'smoking': ['yes']}  # Filter out smoker bars
-pubs_smoker = ors.places(**query)[0]['features']
+pubs_smoker = ors.places(**query)['features']
 
 print("\nAmount of smoker pubs: {}".format(len(pubs_smoker)))
 # -
