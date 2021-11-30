@@ -6,9 +6,9 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.12.0
+#       jupytext_version: 1.11.4
 #   kernelspec:
-#     display_name: Python 3 (ipykernel)
+#     display_name: Python 3
 #     language: python
 #     name: python3
 # ---
@@ -22,7 +22,7 @@
 #
 # The challenge here is to prepare the data appropriately and construct a reasonable GET request.
 #
-# [directions]: https://openrouteservice.org/documentation/#/reference/directions/directions/directions-service
+# [directions]: https://openrouteservice.org/dev/#/api-docs/directions
 
 import folium
 import pyproj

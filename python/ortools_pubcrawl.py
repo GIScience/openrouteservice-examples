@@ -59,7 +59,7 @@ folium.vector_layers.Polygon(aoi_coords,
 m
 
 # Now it's time to see which are the lucky bars to host a bunch of increasingly drunk geos.
-# We use the [**Places API**](https://openrouteservice.org/documentation/#/reference/places/places/location-service-(get),
+# We use the [**Places API**](https://openrouteservice.org/dev/#/api-docs/pois),
 # where we can pass a GeoJSON as object right into.
 # As we want to crawl only bars and not churches, we have to limit the query to category ID's which represent pubs.
 # We can get the mapping easily when passing `category_list`:
@@ -70,7 +70,7 @@ from openrouteservice import client, places
 ors = client.Client(key=api_key)
 # -
 
-# [**Here**](https://github.com/GIScience/openrouteservice-docs#places-response) is a nicer list.
+# [**Here**](https://giscience.github.io/openrouteservice/documentation/Places.html) is a nicer list.
 # If you look for pub, you'll find it under `sustenance : 560` with ID 569.
 # Chucking that into a query, yields:
 
@@ -99,7 +99,7 @@ print("\nAmount of smoker pubs: {}".format(len(pubs_smoker)))
 
 # A bit better. Let's see where they are.
 #
-# **Optionally**, use the [**Geocoding API**](https://openrouteservice.org/documentation/#/reference/places/places/location-service-(get) to get representable names.
+# **Optionally**, use the [**Geocoding API**](https://openrouteservice.org/dev/#/api-docs/geocode) to get representable names.
 # Note, it'll be 25 API calls.
 # Means, you can only run one per minute.
 
@@ -124,7 +124,7 @@ m
 # Ok, we have an idea where we go.
 # But, not in which order.
 # To determine the optimal route, we first have to know the distance between all pubs.
-# We can conveniently solve this with the [**Matrix API**](https://openrouteservice.org/documentation/#/reference/places/places/location-service-(get).
+# We can conveniently solve this with the [**Matrix API**](https://openrouteservice.org/dev/#/api-docs/matrix).
 # > I'd have like to do this example for biking/walking, but I realized too late that we restricted matrix calls to 5x5 locations for those profiles...
 
 # +

@@ -82,7 +82,7 @@ params_poi = {'request': 'pois',
               'sortby': 'distance'}
 
 # POI categories according to
-# https://github.com/GIScience/openrouteservice-docs#places-response
+# https://giscience.github.io/openrouteservice/documentation/Places.html
 categories_poi = {'kindergarten': [153],
                   'supermarket': [518],
                   'hairdresser': [395]}
