@@ -10,6 +10,11 @@ dependencies:
   - shapely
   - fiona
   - requests
+  - geopandas
+  - seaborn
+  - rasterio
+  - rasterstats
+  - mapclassify
   - pip:
       - openrouteservice
       - ortools
