@@ -35,13 +35,13 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import folium
 from branca.colormap import linear
-from shapely.geometry import Point, mapping
+from shapely.geometry import Point, mapping, shape
 
 # ### Set up openrouteservice
 
 # Make sure that you have a [personal key for the public openrouteservice API](https://openrouteservice.org/dev/#/login). Insert **your API key** below.
 
-api_key = '5b3ce3597851110001cf6248eef794d1244544f7826f417356aee9e4'
+api_key = ''
 
 # **Create a ORS client** which will be used to send request to the API. 
 
@@ -112,11 +112,54 @@ badneuenahr_df.explore(m=m, color='blue', marker_kwds={'radius': 15})
 
 # ## Disaster aware route from Nürburgring to Bad Neuanahr-Ahrweiler
 #
-# Now let's calculate the same route after the flood has destroyed roads and bridges. 
+# Now let's calculate the same route but with a polygons which should be avoided. Here is one defined in geojson format. 
 
+avoid_polygon = {
+        "coordinates": [
+          [
+            [
+              7.116163875007658,
+              50.4275875451454
+            ],
+            [
+              7.116163875007658,
+              50.42036541377837
+            ],
+            [
+              7.12985253268107,
+              50.42036541377837
+            ],
+            [
+              7.12985253268107,
+              50.4275875451454
+            ],
+            [
+              7.116163875007658,
+              50.4275875451454
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      }
+avoid_polygon_df = gpd.GeoDataFrame({'geometry': [shape(avoid_polygon)]}).set_crs(epsg=4326)
 
+# We'll add the polygon to the request as an additional parameter `avoid_polygons`.
 
+request_params_flood = request_params.copy()
+request_params_flood['options'] = {'avoid_polygons': avoid_polygon}
 
+# Then send the request again
+
+route_directions_avoided = ors_client.directions(**request_params_flood)
+route_avoided = gpd.GeoDataFrame.from_features(route_directions_avoided).set_crs(epsg=4326)
+
+# And show the result on the map
+
+m = route.explore(tiles='cartodbpositron', color='green')
+route_avoided.explore(m=m, color='red')
+avoid_polygon_df.explore(m=m)
+staging_area_df.explore(m=m, color='red', marker_kwds={'radius': 15})
+badneuenahr_df.explore(m=m, color='blue', marker_kwds={'radius': 15})
 
 # ### Calculate routes from base camp to the affected places 
 
@@ -157,6 +200,8 @@ staging_area_df.explore(m=m, color='green')
 
 request_params_flood = request_params.copy()
 request_params_flood['options'] = {'avoid_polygons': mapping(affected_roads_bridges_union.make_valid().geometry[0])}
+
+request_params_flood
 
 # Now one request will be sent for each affected place. 
 #
