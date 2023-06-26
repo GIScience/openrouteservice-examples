@@ -17,7 +17,7 @@ cd openrouteservice-examples
 python -m venv .venv
 source .venv/bin/activate
 
-pip install -r requirements
+pip install -r requirements.txt
 ```
 
 > Note: In case jupyter is already installed globally, and you want to use the local version, you can create a symlink to
