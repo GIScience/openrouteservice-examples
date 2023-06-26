@@ -57,8 +57,8 @@ ors_client = client.Client(key=api_key)
 
 # Defines the coordinates of the staging area, Nürburgring
 
-staging_area = (6.943241, 50.334265)
-staging_area_df = gpd.GeoDataFrame({'geometry': [Point(staging_area)], 'name': ['Bad Neuenahr']}, crs="epsg:4326")
+staging_area_coordinates = (6.943241, 50.334265)
+staging_area_df = gpd.GeoDataFrame({'geometry': [Point(staging_area_coordinates)], 'name': ['Bad Neuenahr']}, crs="epsg:4326")
 
 # Defines the coordinates of Bad Neuenahr-Ahrweiler
 
@@ -67,9 +67,9 @@ badneuenahr_df = gpd.GeoDataFrame({'geometry': [Point(badneuenahr_coordinates)],
 
 # Let's define the request parameters 
 
-request_params = {'coordinates': [staging_area, bad_neuenahr_ahrweiler],
+request_params = {'coordinates': [staging_area_coordinates, badneuenahr_coordinates],
                  'format_out': 'geojson',
-                 'profile': 'driving-hgv',
+                 'profile': 'driving-car',
                  'preference': 'recommended',
                  'instructions': False}
 
@@ -147,6 +147,7 @@ affected_roads_bridges_union.geometry = affected_roads_bridges_union.make_valid(
 
 m = affected_roads_bridges.explore(color='red', tooltip=['id'], tiles='cartodbpositron', legend=True)
 affected_places.explore(m=m, color='blue', legend=True)
+staging_area_df.explore(m=m, color='green')
 
 #
 # Next we loop over all communities in `affected_places`. Some communities won't be reachable at all, they were cut off by the disaster. Openrouteservice will throw errors for these destinations, as it won't be able to create a route. We account for this circumstance with a `try except` block.
@@ -168,21 +169,21 @@ avoiding_routes = []
 for i, p in affected_places.iterrows():
 
     # Calculate route before the flood
-    request_params['coordinates'] = [basecamp_coordinates, (p.geometry.x, p.geometry.y)]
-    directions_normal = ors.directions(**request_params)
+    request_params['coordinates'] = [staging_area_coordinates, (p.geometry.x, p.geometry.y)]
+    directions_normal = ors_client.directions(**request_params)
     directions_normal_df = gpd.GeoDataFrame().from_features(directions_normal)
     directions_normal_df['name'] = p['name']
     directions_normal_df['id'] = i
 
     # Calculate route after the flood
     try:
-        request_params_flood['coordinates'] = [basecamp_coordinates, (p.geometry.x, p.geometry.y)]
-        directions_flood = ors.directions(**request_params_flood)
+        request_params_flood['coordinates'] = [staging_area_coordinates, (p.geometry.x, p.geometry.y)]
+        directions_flood = ors_client.directions(**request_params_flood)
         directions_flood_df = gpd.GeoDataFrame().from_features(directions_flood)
         directions_flood_df['name'] = p['name']
         directions_flood_df['id'] = i
     except ApiError as e:
-        print(e)
+        #print(e)
         print(f"No route found for {p['name']}")
         continue
     
@@ -204,35 +205,52 @@ avoiding_routes_df['duration'] = avoiding_routes_df.summary.map(lambda x: x['dur
 
 avoiding_routes_df = avoiding_routes_df.join(normal_routes_df[['duration']], lsuffix='_avoid')
 avoiding_routes_df['duration_difference'] = (avoiding_routes_df.duration_avoid - avoiding_routes_df.duration) / 60. 
-avoiding_routes_df['duration_difference_%'] = (avoiding_routes_df.duration_avoid - avoiding_routes_df.duration) / avoiding_routes_df.duration_avoid * 100. 
+avoiding_routes_df['duration_difference_percent'] = (avoiding_routes_df.duration_avoid - avoiding_routes_df.duration) / avoiding_routes_df.duration_avoid * 100.
+affected_places_dur = affected_places.join(avoiding_routes_df[['duration_difference', 'duration_difference_percent']])
 # -
 
+# # Analysis & Evaluation
+#
+# In this code chunk, we will take the first step towards analyzing and evaluating the travel time differences between regular routes and routes that bypass flood-affected infrastructure. We will create classes that allow us to extract more meaning and insights from these differences. For this purpose we use the `classInt` package.
 
+# In the following code chunk, we will create a bar plot for each affected community, showcasing the travel time differences between regular routes and disaster-aware routes. Before plotting, we will sort the data based on a leveled factor x variable to ensure a visually appealing and informative representation.
 
 fig, axes = plt.subplots(1,1, figsize=(15, 5))
-sns.barplot(data=avoiding_routes_df.sort_values('duration_difference_%', ascending=False), 
-            x='name', y='duration_difference_%', color='lightblue',
+sns.barplot(data=avoiding_routes_df.sort_values('duration_difference_percent', ascending=False), 
+            x='name', y='duration_difference_percent', color='lightblue',
            ax=axes)
-g = plt.xticks(rotation = 45, ha='right') # Rotates X-Axis Ticks by 45-degrees
+plt.xticks(rotation = 45, ha='right')
+plt.ylabel('Difference in duration [%]')
+plt.xlabel('Affected places')
 
-affected_places_dur = affected_places.join(avoiding_routes_df[['duration_difference', 'duration_difference_%']])
-#affected_places_dur = affected_places_dur.loc[affected_places_dur['name'] != 'Hönningen']
+print(f"Mean travel time difference: {avoiding_routes_df['duration_difference'].mean()}")
+print(f"Median travel time difference: {avoiding_routes_df['duration_difference'].median()}")
 
-# +
-place_name = 'Hönningen'
-m = affected_places_dur.explore(column='duration_difference_%', 
-                            tooltip=['name', 'duration_difference_%','duration_difference'],
+# The bar plot will visually represent these travel time differences, allowing for easy comparison among the affected communities. By sorting the data based on the leveled factor in the x variable, the plot will display the communities in descending traveltime increase.
+#
+# -   There are 7 communities where there is no travel time difference between the regular and disaster-aware routes
+#
+# -   8 communities show increaes in travel duration larger than 40%. 
+#
+# -   Overall the mean traveltime difference is at 13.64 min and the median at 8.64 min. Not including the 5 not reachable communities.
+#
+
+# ### Showing the results on the map
+
+# One last thing before we are done is plotting the results on a map. In addition, you can select one of the communities by name to show the route berfore and after the flood. Just adjust the `place_name = 'Insul 2'` variable. Try out different place names. What do you observe?
+
+place_name = 'Insul 2'
+m = affected_places_dur.explore(column='duration_difference_percent', 
+                            tooltip=['name', 'duration_difference_percent','duration_difference'],
                             popup=True,  # show all values in popup (on click)
                             tiles="CartoDB positron",  # use "CartoDB positron" tiles
-                            cmap='Reds', vmin=0, vmax=affected_places_dur['duration_difference_%'].max(),
+                            cmap='Reds', vmin=0, vmax=affected_places_dur['duration_difference_percent'].max(),
                             marker_kwds=dict(radius=10, fill=True))
-
-basecamp.explore(
+staging_area_df.explore(
     m=m,
     marker_type='marker',
     marker_kwds={'icon': folium.map.Icon(icon='people')},
     color="orange", 
-    #marker_kwds=dict(radius=10, fill=True)
 )
 avoiding_routes_df.loc[avoiding_routes_df['name'] == place_name].explore(
     m=m,
@@ -241,53 +259,22 @@ avoiding_routes_df.loc[avoiding_routes_df['name'] == place_name].explore(
     legend=True,
     tooltip=['name', 'duration'],
     popup=True,
-    color="lightpink")
-#normal_routes_df.loc[normal_routes_df['name'] == place_name].explore(
-#    m=m,
-#    name='Route before flood',
-#    tooltip=['name', 'duration'],
-#    popup=True,
-#    color="green")
-affected_roads_bridges.explore(m=m, 
-                               color='red',
-                                 tooltip=['id'],
- 
-                              )
-m
-# -
-
-# ## Isochrones
-
-isochrones_parameters = {
-    'locations': [basecamp_coordinates],
-    'profile': 'driving-car',
-    'range_type': 'time',
-    'range': [60 * 60],  # 900/60 = 15 minutes # Get population count for isochrones
-}
-
-isochrones = ors.isochrones(**isochrones_parameters)
-isochrones_df = gpd.GeoDataFrame.from_features(isochrones).set_crs(epsg=4326)
-
-# +
-m = affected_places.explore(tooltip=['name'],
-                            popup=True,  # show all values in popup (on click)
-                            tiles="CartoDB positron", 
-                            color='red',
-                            marker_kwds=dict(radius=10, fill=True))
-
-basecamp.explore(
+    color="red")
+normal_routes_df.loc[normal_routes_df['name'] == place_name].explore(
     m=m,
-    marker_type='marker',
-    marker_kwds={'icon': folium.map.Icon(icon='people')},
-    color="orange", 
-    #marker_kwds=dict(radius=10, fill=True)
-)
-affected_roads_bridges.explore(m=m, 
-                               color='red',
-                                 tooltip=['id'],
- 
-                              )
-isochrones_df.explore(m=m)
-# -
+    name='Route before flood',
+    tooltip=['name', 'duration'],
+    popup=True,
+    color="green")
+affected_roads_bridges.explore(m=m, color='red',tooltip=['id'])
+m
+
+# normal_routes_df.loc[normal_routes_df['name'] == place_name].explore(
+#     m=m,
+#     name='Route before flood',
+#     tooltip=['name', 'duration'],
+#     popup=True,
+#     categorical=True,
+#     color="green")
 
 
