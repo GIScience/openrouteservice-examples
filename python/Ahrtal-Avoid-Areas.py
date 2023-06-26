@@ -67,70 +67,8 @@ route = gpd.GeoDataFrame().from_features(route_directions).set_crs(epsg=4326)
 
 route.explore()
 
-# Plot route on map
-
-# avoid_polygons = {
-#     'type': 'FeatureCollection',
-#     'features': []
-# }
-
-# def handle_draw(self, action, geo_json):
-#     """Do something with the GeoJSON when it's drawn on the map"""    
-#     avoid_polygons['features'].append(geo_json)
-
-# m = Map(center=(7, 50.4), zoom=10, scroll_wheel_zoom=True, basemap=basemaps.CartoDB.Positron)
-#
-# route_layer = GeoData(geo_dataframe = route,
-#                         name = 'Route Normal', 
-#                         style={"color": "red",
-#                                "opacity": 0.5})
-# m.add_layer(route_layer)
-# draw_control = DrawControl()
-# draw_control.polygon = {
-#     "shapeOptions": {
-#         "fillColor": "#6be5c3",
-#         "color": "#6be5c3",
-#         "fillOpacity": 1.0
-#     },
-#     "drawError": {
-#         "color": "#dd253b",
-#         "message": "Oups!"
-#     },
-#     "allowIntersection": False
-# }
-# draw_control.on_draw(handle_draw)
-# m.add_control(draw_control)
-# m
-
 # #### Send request again with avoided polygon
 #
-
-# request_params['options'] = {'avoid_polygons': avoid_polygons['features'][0]['geometry']}
-# route_directions_avoided = ors.directions(**request_params)
-# route_avoided = gpd.GeoDataFrame().from_features(route_directions_avoided)
-
-# m = Map(center=start_point[::-1], zoom=10, scroll_wheel_zoom=True, basemap=basemaps.CartoDB.Positron)
-#
-# route_layer = GeoData(geo_dataframe = route,
-#                         name = 'Route Normal', 
-#                         style={"color": "green",
-#                                "opacity": 0.5})
-# m.add_layer(route_layer)
-#
-# route_avoided_layer = GeoData(geo_dataframe = route_avoided,
-#                         name = 'Route Avoided', 
-#                         style={"color": "red",
-#                                "opacity": 0.5})
-# m.add_layer(route_avoided_layer)
-#
-# avoided_polygon = GeoData(geo_dataframe = gpd.GeoDataFrame().from_features(avoid_polygons),
-#                         name = 'Avoided polygon', 
-#                         style={"color": "blue", "fillColor": None, 'alpha': 0, "fillOpacity": 1,
-#                                "opacity": 0.5})
-# m.add_layer(avoided_polygon)
-#
-# m
-# ### Load affected roads and places 
 
 # The basecamp where the rescue helpers were stationed is the Nürburgring
 
