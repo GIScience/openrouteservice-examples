@@ -12,3 +12,11 @@ Pillow
 overpy
 selenium
 webdriver-manager
+geopandas
+matplotlib
+seaborn
+rasterio
+rasterstats
+mapclassify
+
+
