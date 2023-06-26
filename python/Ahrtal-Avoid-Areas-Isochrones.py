@@ -53,7 +53,7 @@ from rasterstats import zonal_stats
 # When you sucessfully created your personal api key, copy it over in the chunk below.
 #
 
-api_key = ''
+api_key = '5b3ce3597851110001cf6248eef794d1244544f7826f417356aee9e4'
 
 # ## Context
 #
@@ -166,87 +166,6 @@ badneuenahr_df.explore(m=m)
 
 # ### Import data sets
 
-# ### Request parameters
-
-# ### Physicians
-
-physicians = gpd.read_file("../resources/data/ahrtal/physicians.gpkg")
-municipalities = gpd.read_file("../resources/data/ahrtal/affected_municipalities.gpkg")
-
-# ### Population data 
-
-with rio.open("../resources/data/ahrtal/wpop_ahrvalley.tif", 'r') as src:
-    population = src.read(1)
-
-plt.imshow(population)
-
-profile = 'driving-car'
-isochrones_parameters = {
-    'profile': profile,
-    'range_type': 'time',
-    'range': [1800],
-    'interval': 300,
-}
-
-# Add the avoided polygons to the parameters for the request after the flood
-
-isochrones_parameters_flood = isochrones_parameters.copy()
-isochrones_parameters_flood['options'] = {'avoid_polygons': mapping(affected_roads_bridges_union.make_valid().geometry[0])}
-
-# +
-normal_isochrones = []
-avoiding_isochrones = []
-
-for i, start in enumerate(range(0, len(physicians), 5)):
-    selected_physicians = physicians[start:start+5]
-    coordinates = selected_physicians.geometry.map(lambda p: (p.x, p.y)).to_list()
-
-    # Calculate route before the flood
-    isochrones_parameters['locations'] = coordinates
-    isochrones_normal = ors.isochrones(**isochrones_parameters)
-    isochrones_normal_df = gpd.GeoDataFrame().from_features(isochrones_normal).set_crs(epsg=4326)
-    #isochrones_normal_df['name'] = isochrones_normal_df.group_index.map(lambda x: selected_physicians.loc[i * 5 + x, 'name'])
-    #isochrones_normal_df['id'] = isochrones_normal_df.index
-    normal_isochrones.append(isochrones_normal_df)
-
-    # Calculate route after the flood
-    try:
-        isochrones_parameters_flood['locations'] = coordinates
-        isochrones_flood = ors_client_custom.request(url="/v2/isochrones/{}/geojson".format(profile), post_json=isochrones_parameters_flood)        
-        isochrones_flood_df = gpd.GeoDataFrame().from_features(isochrones_flood).set_crs(epsg=4326)
-        #isochrones_flood_df['name'] = isochrones_flood_df.group_index.map(lambda x: selected_physicians.loc[i * 5 + x, 'name'])
-        #isochrones_flood_df['id'] = isochrones_flood_df.index
-    except ApiError as e:
-        print(e)
-        print(f"No isochrones found for {p['name']}")
-        continue
-        
-    avoiding_isochrones.append(isochrones_flood_df)
-
-
-# -
-
-normal_isochrones_df = pd.concat(normal_isochrones)
-normal_isochrones_df = normal_isochrones_df.dissolve(by='value').reset_index()
-avoiding_isochrones_df = pd.concat(avoiding_isochrones)
-avoiding_isochrones_df = avoiding_isochrones_df.dissolve(by='value').reset_index()
-
-
-
-m = folium.plugins.DualMap(location=badneuenahr_coordinates[::-1], layout='vertical', 
-                           tiles='cartodbpositron', zoom_start=8)
-m.get_name
-normal_isochrones_df.sort_values('value', ascending=False).explore(m=m.m1, 
-                                                                   column='value', 
-                                                                    style_kwds={'stroke':False, 'fillOpacity':0.2},
-                                                                   cmap='plasma')
-avoiding_isochrones_df.sort_values('value', ascending=False).explore(m=m.m2, 
-                                                                     column='value',
-                                                                    style_kwds={'stroke':False, 'fillOpacity':0.2},
-                                                                     cmap='plasma', legend=False)
-physicians.explore(m=m)
-affected_roads_bridges.explore(m=m.m2, color='blue')
-
 physicians = gpd.read_file("../resources/data/ahrtal/physicians.gpkg")
 municipalities = gpd.read_file("../resources/data/ahrtal/affected_municipalities.gpkg")
 
@@ -259,6 +178,9 @@ isochrones_parameters = {
     'range': [1800], # seconds 
     'interval': 300, # seconds
 }
+
+# Add the avoided polygons to the parameters for the request after the flood
+
 isochrones_parameters_flood = isochrones_parameters.copy()
 isochrones_parameters_flood['options'] = {'avoid_polygons': mapping(affected_roads_bridges_union.make_valid().geometry[0])}
 
@@ -304,7 +226,7 @@ flood_isochrones_df.dissolve(by='value').reset_index(inplace=True)
 
 m = folium.plugins.DualMap(location=badneuenahr_coordinates[::-1], 
                            tiles='cartodbpositron', 
-                           zoom_start=10)
+                           zoom_start=9)
 normal_isochrones_df.sort_values('value', ascending=False).explore(m=m.m1, 
                                                             categorical=True,
                                                             column='value',
@@ -320,7 +242,7 @@ flood_isochrones_df.sort_values('value', ascending=False).explore(m=m.m2,
                                                                              'fillOpacity': 0.3},
                                                                   cmap='plasma')
 physicians.explore(m=m, color='red')
-affected_roads_bridges.explore(m=m)
+affected_roads_bridges.explore(m=m.m2)
 badneuenahr_df.explore(m=m)
 
 # ## Combine isochrones with population counts by municipality boundaries
@@ -370,10 +292,6 @@ mun_iso_all = pd.concat([iso_mun_normal, iso_mun_flood], axis=0)
 mun_iso_all['pop'].fillna(0, inplace=True)
 mun_iso_all.reset_index(inplace=True)
 
-# +
-#municipalities.set_index('name', inplace=True, drop=False)
-# -
-
 # To calculate the percentage of population affected we first need to calculate the total population of each municipality.  
 
 municipalities['total_pop'] = pd.DataFrame(
@@ -382,7 +300,6 @@ municipalities['total_pop'] = pd.DataFrame(
         raster="../resources/data/ahrtal/wpop_ahrvalley.tif", 
         stats='sum'))
 
-#municipalities.set_index('name', inplace=True, drop=False)
 mun_iso_all['pop_%'] = mun_iso_all.apply(lambda row: (row['pop'] / municipalities.loc[municipalities['name'] == row['name'], 'total_pop'].values[0]) * 100, axis=1) # / municipalities.loc[municipalities['name'] == row['name'], 'total_pop'] * 100 , axis=1)
 mun_iso_all.sort_values('name', inplace=True)
 
