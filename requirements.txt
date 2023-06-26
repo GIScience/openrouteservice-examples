@@ -17,5 +17,6 @@ matplotlib
 seaborn
 rasterio
 rasterstats
+mapclassify
 
 
