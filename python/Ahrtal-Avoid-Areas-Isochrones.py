@@ -53,7 +53,7 @@ from rasterstats import zonal_stats
 # When you sucessfully created your personal api key, copy it over in the chunk below.
 #
 
-api_key = '5b3ce3597851110001cf6248eef794d1244544f7826f417356aee9e4'
+api_key = ''
 
 # ## Context
 #
