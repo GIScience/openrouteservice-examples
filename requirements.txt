@@ -20,4 +20,5 @@ rasterstats
 mapclassify
 networkx
 osmnx
+geopandas
 
