@@ -12,7 +12,7 @@
     <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
     <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
     <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
@@ -25,7 +25,7 @@
             <meta name="viewport" content="width=device-width,
                 initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
             <style>
-                #map_23b0f8eb2e59602024233de5aa5b1466 {
+                #map_2afdb1879ff0308caca405d3d84923bf {
                     position: relative;
                     width: 100.0%;
                     height: 100.0%;
@@ -39,18 +39,18 @@
 <body>
     
     
-            <div class="folium-map" id="map_23b0f8eb2e59602024233de5aa5b1466" ></div>
+            <div class="folium-map" id="map_2afdb1879ff0308caca405d3d84923bf" ></div>
         
 </body>
 <script>
     
     
-            var map_23b0f8eb2e59602024233de5aa5b1466 = L.map(
-                "map_23b0f8eb2e59602024233de5aa5b1466",
+            var map_2afdb1879ff0308caca405d3d84923bf = L.map(
+                "map_2afdb1879ff0308caca405d3d84923bf",
                 {
-                    center: [40.76657321777155, -73.9831392189498],
+                    center: [40.715709, -74.005092],
                     crs: L.CRS.EPSG3857,
-                    zoom: 12,
+                    zoom: 14,
                     zoomControl: true,
                     preferCanvas: false,
                 }
@@ -60,36 +60,32 @@
 
         
     
-            var tile_layer_a044d4d30ba187b6f990e8a370b6da96 = L.tileLayer(
+            var tile_layer_9bc4e7e46cd76689fc149b38004e89ab = L.tileLayer(
                 "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                 {"attribution": "Data by \u0026copy; \u003ca target=\"_blank\" href=\"http://openstreetmap.org\"\u003eOpenStreetMap\u003c/a\u003e, under \u003ca target=\"_blank\" href=\"http://www.openstreetmap.org/copyright\"\u003eODbL\u003c/a\u003e.", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
-            ).addTo(map_23b0f8eb2e59602024233de5aa5b1466);
+            );
         
     
-        function geo_json_27b6389ff0e8797a98ae6630a1c3038e_styler(feature) {
-            switch(feature.id) {
-                default:
-                    return {"color": "#ffd699"};
-            }
-        }
+                tile_layer_9bc4e7e46cd76689fc149b38004e89ab.addTo(map_2afdb1879ff0308caca405d3d84923bf);
+    
 
-        function geo_json_27b6389ff0e8797a98ae6630a1c3038e_onEachFeature(feature, layer) {
+        function geo_json_1d35006dd33dbc549088ece8b7c9b145_onEachFeature(feature, layer) {
             layer.on({
             });
         };
-        var geo_json_27b6389ff0e8797a98ae6630a1c3038e = L.geoJson(null, {
-                onEachFeature: geo_json_27b6389ff0e8797a98ae6630a1c3038e_onEachFeature,
+        var geo_json_1d35006dd33dbc549088ece8b7c9b145 = L.geoJson(null, {
+                onEachFeature: geo_json_1d35006dd33dbc549088ece8b7c9b145_onEachFeature,
             
-                style: geo_json_27b6389ff0e8797a98ae6630a1c3038e_styler,
         });
 
-        function geo_json_27b6389ff0e8797a98ae6630a1c3038e_add (data) {
-            geo_json_27b6389ff0e8797a98ae6630a1c3038e
-                .addData(data)
-                .addTo(map_23b0f8eb2e59602024233de5aa5b1466);
+        function geo_json_1d35006dd33dbc549088ece8b7c9b145_add (data) {
+            geo_json_1d35006dd33dbc549088ece8b7c9b145
+                .addData(data);
         }
-            geo_json_27b6389ff0e8797a98ae6630a1c3038e_add({"features": [{"geometry": {"geometries": [], "type": "GeometryCollection"}, "id": "0", "type": "Feature"}], "type": "FeatureCollection"});
+            geo_json_1d35006dd33dbc549088ece8b7c9b145_add({"geometries": [], "type": "GeometryCollection"});
 
         
+    
+                geo_json_1d35006dd33dbc549088ece8b7c9b145.addTo(map_2afdb1879ff0308caca405d3d84923bf);
 </script>
 </html>
