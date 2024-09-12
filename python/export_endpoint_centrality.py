@@ -15,7 +15,7 @@
 
 # # Calculating Centrality using the Export Endpoint
 #
-# Complex network analysis, such as calculating different centrality measures (TODO: add wiki link(s)), surpass the capabilites of the openrouteservice. There exist a lot of tools for network analyses that are much better suited for these tasks. 
+# Complex network analysis, such as calculating different centrality measures, surpass the capabilites of the openrouteservice. There exist a lot of tools for network analyses that are much better suited for these tasks. 
 #
 # To support these kinds of analyses, the road network that the openrouteservice uses for route calculation can be exported. This training aims to show the usage of the openrouteservice `/export` endpoint, how to parse the endpoints output into GeoJSON and how to import it into networkx for centrality analyses.
 
