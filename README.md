@@ -31,13 +31,11 @@ pip install -r requirements.txt
 jupyter notebook python/
 
 ### Development
-If you are not just using but editing or adding notebooks, you need to install the jupytext extension 
+If you are not just using but editing or adding notebooks, you need to install the jupytext extension
 
 ```bash
-# set up jupytext server extension
-jupyter nbextension install --py jupytext --user
-jupyter nbextension enable jupytext --user --py
-jupyter serverextension enable jupytext
+# set up jupytext server extension, needs Jupyter Notebook 7 or later
+jupyter labextension enable jupyterlab-jupytext
 ```
 
 Note, that every notebook is paired with a corresponding `.py`-file of the same name.
@@ -48,4 +46,4 @@ When reviewing changes, only the `.py`-file needs to be looked at, the
 maps and other information.
 
 ### Pairing new notebooks
-New notebooks have to be paired by clicking `File > Jupytext > Pair notebook with light Script`
+New notebooks have to be paired by clicking `File > Jupytext > Pair Notebook with Light Format`
