@@ -163,7 +163,7 @@ m
 
 # ## Betweenness centrality
 
-# ORS can also help to calculate betweenness centrality. When ORS is building the routing graph, it interprets all OSM tags which are related to driving speeds (e.g. highway type, surface types, max_speed). You may refer to the [documentation](https://giscience.github.io/openrouteservice/documentation/travel-speeds/Travel-Speeds.html) for details. There are also [country specific assumtions about travel speeds](https://giscience.github.io/openrouteservice/documentation/travel-speeds/Country-Speeds) for different road types. 
+# ORS can also help to calculate betweenness centrality. When ORS is building the routing graph, it interprets all OSM tags which are related to driving speeds (e.g. highway type, surface types, max_speed). You may refer to the [documentation](https://giscience.github.io/openrouteservice/technical-details/travel-speeds/) for details. There are also [country specific assumtions about travel speeds](https://giscience.github.io/openrouteservice/technical-details/travel-speeds/country-speeds) for different road types. 
 #
 # Based on this and the routing profile the travel times for each road segment are calculated. To calculate centrality, you can export this graph and import it into python to calculate centrality indicators using `networkx`.
 #

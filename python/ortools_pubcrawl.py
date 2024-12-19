@@ -70,7 +70,7 @@ from openrouteservice import client, places
 ors = client.Client(key=api_key)
 # -
 
-# [**Here**](https://giscience.github.io/openrouteservice/documentation/Places.html) is a nicer list.
+# [**Here**](https://giscience.github.io/openrouteservice/api-reference/endpoints/poi/) is a nicer list.
 # If you look for pub, you'll find it under `sustenance : 560` with ID 569.
 # Chucking that into a query, yields:
 
